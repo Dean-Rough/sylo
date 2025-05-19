@@ -1,0 +1,8 @@
+{
+  "name": "ai-chat-core",
+  "version": "0.1.0",
+  "description": "AI Chat Core Application",
+  "scripts": {
+    "go": "sh ./scripts/go.sh"
+  }
+}
