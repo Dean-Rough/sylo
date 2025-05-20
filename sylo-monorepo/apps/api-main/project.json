@@ -1,0 +1,50 @@
+{
+  "name": "api-main",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/api-main/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nx/nest:build",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/api-main",
+        "main": "apps/api-main/src/main.ts",
+        "tsConfig": "apps/api-main/tsconfig.build.json",
+        "assets": ["apps/api-main/src/assets"]
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/nest:serve",
+      "options": {
+        "buildTarget": "api-main:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "api-main:build:development"
+        },
+        "production": {
+          "buildTarget": "api-main:build:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/apps/api-main"],
+      "options": {
+        "jestConfig": "apps/api-main/jest.config.ts"
+      }
+    }
+  },
+  "tags": []
+}

@@ -1,10 +1,10 @@
 # Design Studio Productivity App
 
-Welcome to the Design Studio Productivity App monorepo! This project aims to create a comprehensive productivity tool for design studios, centered around an intelligent AI chat interface.
+Welcome to the Design Studio Productivity App monorepo! This project aims to create a comprehensive, AI-powered productivity suite for design studios. It's architected around an intelligent AI chat interface that orchestrates a wide array of features to automate tasks, enhance project management, streamline communication, and boost overall efficiency.
 
 ## Overview
 
-This application leverages a modern technology stack to deliver a seamless and powerful user experience:
+This application leverages a modern technology stack to deliver a seamless and powerful user experience, evolving from a core AI chat and prompt management system into a full-fledged productivity platform:
 
 *   **Frontend:** Next.js (React) with TypeScript, styled using Shadcn UI / Radix UI + Tailwind CSS, hosted on Vercel.
 *   **Backend API:** A dedicated NestJS application (TypeScript) handles the primary backend logic, including interactions with Supabase, orchestration of the AI Chat Core, and other API functionalities.
@@ -18,6 +18,18 @@ For detailed information about the project, please refer to the following docume
 *   **[PROJECT_PLAN.md](PROJECT_PLAN.md):** Outlines the overall project vision, MVP scope, phased rollout, and technology choices.
 *   **[CODING_STANDARDS.md](CODING_STANDARDS.md):** Details the coding conventions, linting, formatting, and best practices to be followed.
 *   **[DIRECTORY_STRUCTURE.md](DIRECTORY_STRUCTURE.md):** Describes the organization of this monorepo and the structure of individual applications and packages.
+
+## Key AI-Powered Features
+
+Sylo is being developed to offer a suite of intelligent tools to streamline your workflow:
+
+*   **🧠 AI Project Manager:** Automates project progression, predicts delays, and provides real-time visibility.
+*   **📅 AI Calendar:** Intelligently schedules your tasks, meetings, and to-dos into an optimized daily plan.
+*   **✅ AI Task Manager:** Auto-schedules tasks based on deadlines and priorities, adjusting in real-time.
+*   **📝 AI Meeting Notetaker:** Automatically records, transcribes, and summarizes meetings, converting action items into tasks.
+*   **🔄 AI Workflows:** Transforms ideas into structured projects and automates routine task assignments and reminders.
+*   **📊 AI Gantt Chart:** Maintains accurate, real-time project timelines with easy drag-and-drop adjustments.
+*   **🤝 AI Meeting Assistant:** Simplifies meeting scheduling with personalized booking pages and templates.
 
 ## Monorepo Structure
 

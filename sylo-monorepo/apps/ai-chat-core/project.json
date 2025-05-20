@@ -1,0 +1,30 @@
+{
+  "name": "ai-chat-core",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/ai-chat-core/app",
+  "projectType": "application",
+  "targets": {
+    "serve": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "sh ./scripts/go.sh",
+        "cwd": "apps/ai-chat-core"
+      }
+    },
+    "install-deps": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "sh ./scripts/install-deps.sh",
+        "cwd": "apps/ai-chat-core"
+      }
+    },
+    "start-dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "sh ./scripts/start-dev.sh",
+        "cwd": "apps/ai-chat-core"
+      }
+    }
+  },
+  "tags": []
+}

@@ -230,3 +230,5 @@ packages/types/
 ```
 
 This structure provides a good starting point for modularity and scalability. It will evolve as the project grows.
+
+*Note on Future Evolution: As the advanced AI Productivity Suite features (detailed in the [PROJECT_PLAN.md](PROJECT_PLAN.md)) are designed and implemented, this directory structure, particularly within `apps/api-main/src/modules/` and `apps/ai-chat-core/app/`, is expected to evolve. New dedicated modules (e.g., `calendar_module`, `task_scheduling_module`, `meeting_processing_module`) or even new microservices under `apps/` might be introduced to support these capabilities. This document will be updated iteratively to reflect such changes.*

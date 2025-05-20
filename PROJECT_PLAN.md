@@ -2,7 +2,7 @@
 
 ## 1. Project Goal
 
-To build a "Design Studio Productivity App" with a central AI chat orchestrating internal data management and external service integrations, leveraging Vercel and Supabase for core infrastructure, and designed for a sophisticated, multi-model OpenAI-powered chat experience with persistent memory and a user-managed prompt repository.
+To build a "Design Studio Productivity App" evolving into a comprehensive AI-powered suite that automates and intelligently assists with project management, scheduling, task execution, meetings, and workflows, leveraging Vercel and Supabase for core infrastructure, and designed for a sophisticated, multi-model OpenAI-powered chat experience with persistent memory and a user-managed prompt repository.
 
 ## 2. Phase 0: Foundational MVP - Core Architecture, User-Centric AI Interaction & Prompt Management
 
@@ -154,9 +154,84 @@ graph TD
     AIC_Supabase_Comm --> S_DB
 ```
 
+*Note: This diagram represents the MVP architecture. As the advanced AI Productivity Suite features (detailed in section 4.1) are developed, this diagram will likely be extended to include new services (e.g., for transcription, advanced scheduling algorithms) or more complex interactions between existing components.*
+
 ## 4. Future Phases & Considerations
 
-### 4.1. Phase 1: Core Feature Modules & Key Integrations
+### 4.1 The Sylo AI Productivity Suite: Core Capabilities
+
+This suite aims to provide a comprehensive set of AI-driven tools to enhance productivity for design studios.
+
+#### 4.1.1 AI Project Manager
+
+Sylo’s AI Project Manager automates project progression by:
+*   Automatically advancing projects as tasks are completed, minimizing manual updates.
+*   Predicting potential delays and alerting teams proactively.
+*   Reducing the need for frequent check-ins and status meetings.
+*   Providing real-time visibility into project timelines and team workloads.
+
+*Architectural Note: This will likely integrate deeply with the task management system (see 4.2.1 and 4.1.3) and AI Chat Core for predictive analytics.*
+
+#### 4.1.2 AI Calendar
+
+The AI Calendar intelligently schedules your day by:
+*   Integrating tasks, meetings, and to-dos into a cohesive, optimized daily plan.
+*   Prioritizing tasks to ensure deadlines are met without overworking.
+*   Combining multiple calendars (Gmail, iCloud) into a single view.
+*   Automatically time-blocking for deep work and alerting you to potential overcommitments.
+
+*Architectural Note: Requires robust integration with external calendar services (Google Calendar already in MVP, extend for iCloud, etc.) and sophisticated scheduling algorithms, potentially as a new module in the NestJS backend or a dedicated service.*
+
+#### 4.1.3 AI Task Manager
+
+This feature streamlines task management by:
+*   Auto-scheduling tasks based on deadlines, priorities, and dependencies.
+*   Adjusting schedules in real-time to accommodate changes or interruptions.
+*   Highlighting top-priority tasks to maintain focus.
+*   Flagging at-risk tasks and suggesting adjustments to keep projects on track.
+
+*Architectural Note: Builds upon the Asana-style project manager planned for Phase 1 (now 4.2.1), enhancing it with AI-driven scheduling and risk assessment logic, likely within the NestJS backend and interacting with the AI Chat Core.*
+
+#### 4.1.4 AI Meeting Notetaker
+
+Enhance meeting productivity with:
+*   Automatic recording, transcription, and summarization of meetings.
+*   Conversion of action items into tasks, assigned and scheduled appropriately.
+*   Rapid generation of meeting summaries and transcripts, available shortly after meetings conclude.
+
+*Architectural Note: May require a dedicated service for audio processing and transcription, or integration with third-party transcription APIs. Summarization and action item extraction would leverage the AI Chat Core. Task creation links to the AI Task Manager (4.1.3).*
+
+#### 4.1.5 AI Workflows
+
+Automate and optimize workflows by:
+*   Transforming ideas or documents into structured projects with defined tasks and deadlines.
+*   Assigning tasks based on team roles, availability, and capacity.
+*   Identifying and addressing missing tasks or steps in workflows.
+*   Automating routine tasks such as scheduling handoffs and setting reminders.
+
+*Architectural Note: This feature implies a sophisticated understanding of project structures and team dynamics, likely managed within the NestJS backend with significant input from the AI Chat Core for parsing ideas and defining tasks.*
+
+#### 4.1.6 AI Gantt Chart
+
+Maintain accurate project timelines with:
+*   Real-time updates reflecting actual project progress.
+*   Easy adjustments to timelines through drag-and-drop functionality.
+*   Grouping and color-coding tasks for clarity.
+*   Switching between different time views (weekly, quarterly, yearly) for planning flexibility.
+
+*Architectural Note: This is a UI/UX intensive feature for the frontend, backed by real-time data from the project and task management systems in the NestJS backend. AI can assist in suggesting timeline adjustments based on progress and predictions from the AI Project Manager (4.1.1).*
+
+#### 4.1.7 AI Meeting Assistant
+
+Simplify meeting scheduling and management by:
+*   Allowing customization of meeting preferences, such as preferred times and daily limits.
+*   Generating personalized booking pages with availability and preferred meeting times.
+*   Creating reusable meeting templates for different meeting types.
+*   Facilitating quick entry into meetings with integrated reminders and links.
+
+*Architectural Note: Extends calendar integration capabilities (see 4.1.2), focusing on the scheduling user experience. The NestJS backend would manage booking logic and preferences, interacting with calendar services.*
+
+### 4.2. Phase 1: Core Feature Modules & Key Integrations
 - [ ] Asana-style project manager (tasks, assignments, deadlines).
 - [ ] Basic Google Workspace integration (e.g., Calendar read/write, basic Drive interaction) via NestJS backend.
 - [ ] Whiteboard/Quick Notes page.
@@ -164,7 +239,7 @@ graph TD
 - [ ] Enhanced UI/UX: Dashboard with quick starts, key info, mini-modules.
 - [ ] Full voice mode for AI chat interaction.
 
-### 4.2. Phase 2: Advanced Integrations & Specialized Features
+### 4.3. Phase 2: Advanced Integrations & Specialized Features
 - [ ] Full Google Workspace CRUD (Docs, Meets, Contacts, Email, Drive) via NestJS backend.
 - [ ] Xero integration via NestJS backend.
 - [ ] Client Portal.
@@ -177,7 +252,7 @@ graph TD
 - [ ] Adobe Creative Cloud integration.
 - [ ] AI-Powered Image Tagging/Search.
 
-### 4.3. Future MCP Integrations (Examples from mcpmarket.com)
+### 4.4. Future MCP Integrations (Examples from mcpmarket.com)
 *   [`anthropic-cookbook`](https://mcpmarket.com/server/anthropic-cookbook)
 *   [`cad-1`](https://mcpmarket.com/server/cad-1) & [`sketchup-1`](https://mcpmarket.com/server/sketchup-1)
 *   [`desktop-commander-1`](https://mcpmarket.com/server/desktop-commander-1)
@@ -189,6 +264,6 @@ graph TD
 *   [`apple`](https://mcpmarket.com/server/apple)
 *   [`whatsapp-3`](https://mcpmarket.com/server/whatsapp-3)
 
-### 4.4. UI/UX Philosophy
+### 4.5. UI/UX Philosophy
 *   The application will be built with a "slick, minimal, negative space, minimal instruction" design philosophy, using **Shadcn UI / Radix UI + Tailwind CSS**.
 *   The goal is a "fucking beautiful" UI that is intuitive for savvy users.

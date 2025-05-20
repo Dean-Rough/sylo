@@ -20,6 +20,9 @@
           "watchDepsName": "watch-deps"
         }
       }
+    },
+    {
+      "plugin": "@nx/nest"
     }
   ]
 }

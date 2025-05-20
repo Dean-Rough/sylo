@@ -74,6 +74,40 @@ Nx Console is an editor extension that enriches your developer experience. It le
 
 [Install Nx Console &raquo;](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
 
+## Development Status &amp; Known Issues
+
+This section tracks the progress and current status of development tasks and any known issues within the monorepo.
+
+**Nx Target Execution (as of 2025-05-20):**
+
+*   **`api-main` Build (`npx nx build api-main`):**
+    *   **Initial Problem:** Build failed with `"The "@nx/nest" package does not support Nx executors."`
+    *   **Actions Taken:**
+        *   Added `@nx/nest` (v21.0.3) to `devDependencies` in the root `package.json`.
+        *   Ensured `@nx/nest` is registered as a plugin in `nx.json`.
+        *   Corrected `tsConfig` path in `apps/api-main/project.json` to `apps/api-main/tsconfig.build.json`.
+        *   Removed non-existent `webpackConfig` from `apps/api-main/project.json`.
+    *   **Current Status:** **STILL FAILING.** The error persists: `"The "@nx/nest" package does not support Nx executors."`
+    *   **Suspected Cause:** A Node.js version mismatch. The current environment uses Node.js v23.7.0, while `nx@21.0.3` requires `^20.19.0 || ^22.12.0`. This incompatibility is the most likely reason for the executor not being recognized.
+    *   **Recommendation:** Switch to a compatible Node.js version (e.g., v20.x or v22.x).
+
+*   **`ai-chat-core` Dependency Installation (`npx nx run ai-chat-core:install-deps`):**
+    *   **Initial Problem:** Encountered executor misconfiguration and undefined exit codes, though the underlying script (`scripts/install-deps.sh`) worked directly.
+    *   **Actions Taken:**
+        *   Verified `project.json` for `ai-chat-core`: `executor` is `nx:run-commands`, `command` and `cwd` paths are correct.
+        *   No changes to `package.json` were ultimately needed for this target's executor.
+    *   **Current Status:** **SUCCESSFUL.** The command `npx nx run ai-chat-core:install-deps` now executes the script and completes successfully.
+
+*   **`nx graph` Issue:**
+    *   **Problem:** `npx nx graph` started, but its daemon later closed the connection.
+    *   **Current Status:** Not re-tested. This may also be related to the Node.js version incompatibility.
+
+*   **`npm install` Warnings:**
+    *   **Problem:** `npm install` in `sylo-monorepo/` completed with warnings (peer dependencies, Node.js engine mismatch).
+    *   **Current Status:** Warnings persist, particularly the `EBADENGINE` warning for Node.js version.
+
+**Overall Recommendation:**
+The most critical step to resolve ongoing Nx issues, particularly for `api-main`, is to align the Node.js development environment with the versions supported by `nx@21.0.3` (i.e., Node.js `^20.19.0 || ^22.12.0`).
 ## Useful links
 
 Learn more:
