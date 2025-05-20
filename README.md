@@ -7,7 +7,7 @@ Welcome to the Design Studio Productivity App monorepo! This project aims to cre
 This application leverages a modern technology stack to deliver a seamless and powerful user experience:
 
 *   **Frontend:** Next.js (React) with TypeScript, styled using Shadcn UI / Radix UI + Tailwind CSS, hosted on Vercel.
-*   **Backend (BFF & API):** Next.js API Routes handle user-facing backend logic and orchestrate calls to specialized services.
+*   **Backend API:** A dedicated NestJS application (TypeScript) handles the primary backend logic, including interactions with Supabase, orchestration of the AI Chat Core, and other API functionalities.
 *   **Database & Authentication:** Supabase (PostgreSQL) provides the database, user authentication (Google OAuth), and storage capabilities.
 *   **AI Chat Core:** A separate Python FastAPI service handles advanced AI logic, OpenAI model interactions, and manages persistent chat memory and user AI preferences via Supabase.
 
@@ -24,7 +24,8 @@ For detailed information about the project, please refer to the following docume
 This repository is a monorepo managed by [Nx/Turborepo - *Specify Chosen Tool Here*].
 
 *   `apps/`: Contains the individual applications:
-    *   `web/`: The Next.js frontend and API routes.
+    *   `web/`: The Next.js frontend.
+    *   `api-main/`: The NestJS backend application.
     *   `ai-chat-core/`: The Python FastAPI AI Chat Core service.
 *   `packages/`: Contains shared code and configurations:
     *   `ui/`: Shared React UI components.
@@ -48,7 +49,7 @@ The initial directory structure has been established. Detailed instructions for 
 
 ### Setup
 
-1.  **Initial Directory Structure:** The foundational directory structure as defined in [`DIRECTORY_STRUCTURE.md`](DIRECTORY_STRUCTURE.md:20) has been created. This includes the main `apps/`, `packages/`, and `.github/WORKFLOWS/` directories, along with their initial subdirectories ([`apps/web/`](apps/web/), [`apps/ai-chat-core/`](apps/ai-chat-core/), [`packages/ui/`](packages/ui/), etc.) and placeholder `.env.example` files in [`apps/web/.env.example`](apps/web/.env.example:0) and [`apps/ai-chat-core/.env.example`](apps/ai-chat-core/.env.example:0).
+1.  **Initial Directory Structure:** The foundational directory structure as defined in [`DIRECTORY_STRUCTURE.md`](DIRECTORY_STRUCTURE.md:20) has been created. This includes the main `apps/`, `packages/`, and `.github/WORKFLOWS/` directories, along with their initial subdirectories ([`apps/web/`](apps/web/), [`apps/api-main/`](apps/api-main/), [`apps/ai-chat-core/`](apps/ai-chat-core/), [`packages/ui/`](packages/ui/), etc.) and placeholder `.env.example` files in [`apps/web/.env.example`](apps/web/.env.example:0) and [`apps/ai-chat-core/.env.example`](apps/ai-chat-core/.env.example:0).
 2.  Clone the repository (if you haven't already).
 3.  Install root dependencies: `[npm/yarn/pnpm] install` (Note: Monorepo tooling like Nx or Turborepo setup is pending).
 4.  Set up environment variables:

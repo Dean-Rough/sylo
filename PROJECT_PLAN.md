@@ -8,11 +8,12 @@ To build a "Design Studio Productivity App" with a central AI chat orchestrating
 
 ### 2.1. Primary Objective
 
-Establish a stable, scalable architecture using Vercel and Supabase. Demonstrate secure user authentication via Google (managed by Supabase Auth). Implement an AI Chat Core (Python/FastAPI) capable of basic OpenAI interaction, managing chat history in Supabase, and interacting with user-specific settings. Implement a Prompt Repository for users to save, manage, and get AI assistance to refine prompts. Demonstrate an authenticated call to a Google service.
+Establish a stable, scalable architecture using Vercel for the frontend, a dedicated NestJS application for the backend, and Supabase for the database and authentication. Demonstrate secure user authentication via Google (managed by Supabase Auth). Implement an AI Chat Core (Python/FastAPI) capable of basic OpenAI interaction, managing chat history in Supabase, and interacting with user-specific settings. Implement a Prompt Repository for users to save, manage, and get AI assistance to refine prompts. Demonstrate an authenticated call to a Google service via the NestJS backend.
 
 ### 2.2. Technology Stack & Services
 
-*   **Frontend & Serverless Functions:** React with Next.js (TypeScript) hosted on **Vercel**. UI built with **Shadcn UI / Radix UI + Tailwind CSS**. Next.js API routes will serve as the primary backend logic layer.
+*   **Frontend:** React with Next.js (TypeScript) hosted on **Vercel**. UI built with **Shadcn UI / Radix UI + Tailwind CSS**. The Next.js application will be primarily responsible for the user interface and client-side logic, making requests to the NestJS backend.
+*   **Backend:** Dedicated **NestJS application (TypeScript)**. This will handle primary backend logic, authenticated requests, interaction with Supabase, orchestration of the AI Chat Core, and Google API interactions. It will be deployed to a suitable cloud environment (e.g., Vercel serverless functions, Google Cloud Run, AWS Lambda).
 *   **Database, Authentication & Storage:** **Supabase** (PostgreSQL database, Supabase Auth for Google OAuth, Supabase Storage for future file uploads).
 *   **AI Chat Core:** Python with FastAPI (hosted as a separate service, e.g., Google Cloud Run, AWS Fargate, DigitalOcean App Platform).
 *   **Key Libraries/Tools:** Docker (for local AI Core development).
@@ -21,8 +22,8 @@ Establish a stable, scalable architecture using Vercel and Supabase. Demonstrate
 
 #### 2.3.1. Project Setup & DevOps
 - [ ] Monorepo (e.g., Nx or Turborepo).
-- [ ] CI/CD: GitHub Actions deploying Next.js app to Vercel, and AI Chat Core to its hosting.
-- [ ] Secure environment variable management (Vercel, Supabase, AI Core hosting).
+- [ ] CI/CD: GitHub Actions deploying Next.js frontend to Vercel, NestJS backend to its environment, and AI Chat Core to its hosting.
+- [ ] Secure environment variable management (Vercel, Supabase, NestJS backend, AI Core hosting).
 
 #### 2.3.2. Supabase Setup
 - [ ] Initialize Supabase project.
@@ -35,11 +36,11 @@ Establish a stable, scalable architecture using Vercel and Supabase. Demonstrate
     - [ ] All tables with appropriate Row Level Security (RLS) enforced.
 - [ ] Enable and configure **Supabase Auth for Google OAuth 2.0**.
 
-#### 2.3.3. Backend Logic (Next.js API Routes on Vercel)
-- [ ] Handle authenticated requests from the frontend (using Supabase Auth session/JWT).
-- [ ] Interact with Supabase (`supabase-js`) for database operations, including **CRUD for `prompt_repository`**.
+#### 2.3.3. Backend Logic (Dedicated NestJS Application)
+- [ ] Handle authenticated requests from the Next.js frontend (using Supabase Auth session/JWT, validated by NestJS).
+- [ ] Interact with Supabase (e.g., using TypeORM, Prisma, or `supabase-js` within NestJS) for database operations, including **CRUD for `prompt_repository`**.
 - [ ] Securely orchestrate calls to the AI Chat Core, passing authenticated user context.
-- [ ] Handle direct interactions with Google APIs (e.g., Google Calendar) using user's Google OAuth tokens.
+- [ ] Handle direct interactions with Google APIs (e.g., Google Calendar) using user's Google OAuth tokens, managed and proxied by NestJS.
 - [ ] API endpoint for "improve prompt" functionality (calls AI Chat Core/OpenAI).
 - [ ] (Optional MVP) API endpoint for "auto-categorize prompt".
 
@@ -55,28 +56,28 @@ Establish a stable, scalable architecture using Vercel and Supabase. Demonstrate
     - [ ] Integrate with one primary OpenAI chat model.
     - [ ] Basic chat memory: store and retrieve the last N conversation turns from/to Supabase's `chat_history` table for the current user.
     - [ ] Function calling to retrieve/update the logged-in user's `user_settings` from Supabase.
-    - [ ] Receive context/data from Next.js API routes (e.g., Google Calendar events) to incorporate into responses.
-    - [ ] Provide an endpoint/function that Next.js API routes can call to "improve a given prompt" using OpenAI.
+    - [ ] Receive context/data from the **NestJS application** (e.g., Google Calendar events) to incorporate into responses.
+    - [ ] Provide an endpoint/function that the **NestJS application** can call to "improve a given prompt" using OpenAI.
     - [ ] (Optional MVP) Provide an endpoint/function for "suggesting categories for a prompt".
 *   **Integration:**
-    - [ ] Receives requests from Next.js API routes (including authenticated user ID).
+    - [ ] Receives requests from the **NestJS application** (including authenticated user ID).
     - [ ] Interacts directly with Supabase (`supabase-py`) for `chat_history` and `user_settings`.
     - [ ] Interacts directly with OpenAI APIs.
 
 #### 2.3.5. Frontend (React/Next.js on Vercel with Shadcn UI / Radix UI + Tailwind CSS)
 - [ ] Basic application shell and navigation.
-- [ ] Google login/authentication flow using Supabase Auth.
-- [ ] A central AI chat interface that communicates with Next.js API routes (which then call the AI Chat Core).
-- [ ] A simple "User Settings" page (data via Next.js API routes from Supabase).
-- [ ] A "Prompt Repository" page: View, search, filter, create, edit, delete prompts. Interface to "improve prompt". Display auto-suggested categories (if implemented).
+- [ ] Google login/authentication flow using Supabase Auth (client-side) and session validation with the NestJS backend.
+- [ ] A central AI chat interface that communicates with the **NestJS application** (which then calls the AI Chat Core).
+- [ ] A simple "User Settings" page (data via the **NestJS application** from Supabase).
+- [ ] A "Prompt Repository" page: View, search, filter, create, edit, delete prompts. Interface to "improve prompt". Display auto-suggested categories (if implemented). (All interactions via the **NestJS application**).
 
 ### 2.4. MVP Outcome
-- [ ] Users can log in with their Google account via Supabase Auth.
-- [ ] The AI chat has basic memory (recalling recent turns of conversation for the user from Supabase).
-- [ ] The AI chat can read/update the user's settings in Supabase.
-- [ ] The AI chat can present information from a Google service (e.g., calendar events fetched by Next.js API routes).
-- [ ] Users can save, manage, and get AI assistance to improve prompts in a dedicated Prompt Repository.
-- [ ] The core architecture (Next.js/Vercel, Supabase, separate Python AI Core with OpenAI integration and DB-backed memory) is validated and ready for iterative feature development.
+- [ ] Users can log in with their Google account via Supabase Auth, with sessions managed and validated by the NestJS backend.
+- [ ] The AI chat has basic memory (recalling recent turns of conversation for the user from Supabase, via NestJS and AI Chat Core).
+- [ ] The AI chat can read/update the user's settings in Supabase (via NestJS and AI Chat Core).
+- [ ] The AI chat can present information from a Google service (e.g., calendar events fetched by the **NestJS application**).
+- [ ] Users can save, manage, and get AI assistance to improve prompts in a dedicated Prompt Repository (interactions via the NestJS backend).
+- [ ] The core architecture (Next.js/Vercel for frontend, dedicated NestJS application for backend, Supabase for DB/Auth, separate Python AI Core with OpenAI integration and DB-backed memory) is validated and ready for iterative feature development. The Next.js frontend will be hosted on Vercel. The NestJS backend will be deployed to a suitable cloud environment (e.g., Vercel, Google Cloud Run, AWS Lambda).
 
 ## 3. Conceptual Architecture Diagram (MVP)
 
@@ -92,7 +93,14 @@ graph TD
         F_UserSettingsPage[User Settings Page]
         F_PromptRepoPage[Prompt Repository Page]
         F_AppShell[App Shell/Nav]
-        F_ApiRoutes[Next.js API Routes]
+    end
+
+    subgraph Backend_NestJS [Backend (NestJS Application)]
+        B_ApiEndpoints[API Endpoints]
+        B_AuthHandler[Auth Handler]
+        B_SupabaseClient[Supabase Interaction Logic]
+        B_AIC_Orchestrator[AI Chat Core Orchestrator]
+        B_GoogleAPI_Handler[Google API Interaction Logic]
     end
 
     subgraph Supabase_PaaS [Supabase (DB, Auth, Storage)]
@@ -105,7 +113,7 @@ graph TD
         AIC_Engine[Conversational Engine]
         AIC_OpenAI_Integration[OpenAI Model Integration]
         AIC_Supabase_Comm[Communicator with Supabase DB]
-        AIC_API_Endpoint[API for Next.js Routes]
+        AIC_API_Endpoint[API for NestJS Backend]
     end
 
     subgraph ExternalServices
@@ -120,15 +128,22 @@ graph TD
     F_AppShell --> F_UserSettingsPage
     F_AppShell --> F_PromptRepoPage
 
-    F_AuthPage --> S_Auth
+    F_AuthPage --> S_Auth %% Initial Auth with Supabase
+    F_AuthPage --> B_AuthHandler %% Token validation with NestJS
 
-    F_ChatUI --> F_ApiRoutes
-    F_UserSettingsPage --> F_ApiRoutes
-    F_PromptRepoPage --> F_ApiRoutes
+    F_ChatUI --> B_ApiEndpoints
+    F_UserSettingsPage --> B_ApiEndpoints
+    F_PromptRepoPage --> B_ApiEndpoints
 
-    F_ApiRoutes --> S_DB
-    F_ApiRoutes --> AIC_API_Endpoint
-    F_ApiRoutes --> Ext_GoogleAPIs  %% Via User's Google Token
+    B_AuthHandler --> S_Auth %% NestJS validates token with Supabase
+
+    B_SupabaseClient --> S_DB
+    B_ApiEndpoints --> B_SupabaseClient
+    B_ApiEndpoints --> B_AIC_Orchestrator
+    B_ApiEndpoints --> B_GoogleAPI_Handler
+
+    B_AIC_Orchestrator --> AIC_API_Endpoint
+    B_GoogleAPI_Handler --> Ext_GoogleAPIs %% Via User's Google Token, proxied by NestJS
 
     AIC_API_Endpoint --> AIC_Engine
     AIC_Engine --> AIC_OpenAI_Integration
@@ -142,15 +157,15 @@ graph TD
 
 ### 4.1. Phase 1: Core Feature Modules & Key Integrations
 - [ ] Asana-style project manager (tasks, assignments, deadlines).
-- [ ] Basic Google Workspace integration (e.g., Calendar read/write, basic Drive interaction).
+- [ ] Basic Google Workspace integration (e.g., Calendar read/write, basic Drive interaction) via NestJS backend.
 - [ ] Whiteboard/Quick Notes page.
 - [ ] Team settings for AI configuration.
 - [ ] Enhanced UI/UX: Dashboard with quick starts, key info, mini-modules.
 - [ ] Full voice mode for AI chat interaction.
 
 ### 4.2. Phase 2: Advanced Integrations & Specialized Features
-- [ ] Full Google Workspace CRUD (Docs, Meets, Contacts, Email, Drive).
-- [ ] Xero integration.
+- [ ] Full Google Workspace CRUD (Docs, Meets, Contacts, Email, Drive) via NestJS backend.
+- [ ] Xero integration via NestJS backend.
 - [ ] Client Portal.
 - [ ] AI-Assisted Proposal Generation.
 - [ ] Advanced FFE Database & Management.

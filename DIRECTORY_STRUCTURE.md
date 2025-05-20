@@ -7,7 +7,8 @@ This document outlines the proposed initial directory structure for the Design S
 ```
 /
 |-- apps/
-|   |-- web/                   # Next.js frontend and API routes
+|   |-- web/                   # Next.js frontend application
+|   |-- api-main/              # NestJS primary backend application
 |   |-- ai-chat-core/          # Python FastAPI AI Chat Core service
 |-- packages/
 |   |-- ui/                    # Shared React UI components (Shadcn UI/Radix)
@@ -28,9 +29,9 @@ This document outlines the proposed initial directory structure for the Design S
 # ... other monorepo config files (nx.json, turbo.json, etc.)
 ```
 
-## 1. `apps/web/` (Next.js Frontend & API Routes)
+## 1. `apps/web/` (Next.js Frontend Application)
 
-This directory will house the Next.js application, including the frontend UI and Next.js API routes that act as the primary backend for user-facing operations.
+This directory will house the Next.js **frontend** application. It is responsible for the user interface and user experience. It will make API calls to the `apps/api-main/` NestJS backend for data and backend operations. The Next.js API routes (`src/app/api/`) within this app should be limited to frontend-specific concerns like authentication callbacks or BFF (Backend for Frontend) patterns that don't involve core business logic, rather than acting as the primary backend.
 
 ```
 apps/web/
@@ -44,29 +45,20 @@ apps/web/
 |   |   |   |-- layout.tsx
 |   |   |   |-- dashboard/
 |   |   |   |   |-- page.tsx
-|   |   |   |-- prompts/       # Prompt Repository
+|   |   |   |-- prompts/       # Prompt Repository (UI)
 |   |   |   |   |-- page.tsx
 |   |   |   |   |-- [promptId]/
 |   |   |   |   |   |-- page.tsx
 |   |   |   |-- settings/
 |   |   |   |   |-- page.tsx
-|   |   |   |-- chat/          # Full chat page
+|   |   |   |-- chat/          # Full chat page (UI)
 |   |   |   |   |-- page.tsx
-|   |   |-- api/               # Next.js API Routes (Backend for Frontend)
+|   |   |-- api/               # Next.js API Routes (BFF, auth callbacks)
 |   |   |   |-- auth/
-|   |   |   |   |-- [...nextauth]/ # If using NextAuth.js with Supabase adapter
-|   |   |   |   |-- callback/    # Or custom Supabase auth callbacks
-|   |   |   |-- user-settings/
+|   |   |   |   |-- [...nextauth]/ # e.g., NextAuth.js with Supabase adapter
+|   |   |   |   |-- callback/    # e.g., OAuth callbacks
+|   |   |   |-- health/        # Example health check for the frontend app itself
 |   |   |   |   |-- route.ts
-|   |   |   |-- prompts/
-|   |   |   |   |-- route.ts     # For CRUD on prompts
-|   |   |   |   |-- improve/
-|   |   |   |   |   |-- route.ts # For improving prompts via AI Core
-|   |   |   |-- ai-chat/
-|   |   |   |   |-- route.ts     # To proxy/orchestrate calls to AI Chat Core
-|   |   |   |-- google/
-|   |   |   |   |-- calendar/
-|   |   |   |   |   |-- route.ts # Example Google Calendar API interaction
 |   |   |-- favicon.ico
 |   |   |-- globals.css        # Global styles (Tailwind base, etc.)
 |   |   |-- layout.tsx         # Root layout
@@ -80,8 +72,8 @@ apps/web/
 |   |-- config/                # App-specific configurations
 |   |-- contexts/              # React Context API providers
 |   |-- hooks/                 # Custom React hooks
-|   |-- lib/                   # Utility functions, Supabase client instance, etc.
-|   |-- services/              # Functions for interacting with API routes
+|   |-- lib/                   # Utility functions, API client setup, etc.
+|   |-- services/              # Functions for interacting with `apps/api-main/`
 |   |-- styles/                # Additional global styles or theme files if needed
 |   |-- types/                 # App-specific TypeScript types (consider moving to packages/types)
 |-- .env.local.example         # Example environment variables for the web app
@@ -94,9 +86,65 @@ apps/web/
 |-- tsconfig.json
 ```
 
-## 2. `apps/ai-chat-core/` (Python FastAPI AI Chat Core)
+## 2. `apps/api-main/` (NestJS Primary Backend)
 
-This directory will house the Python FastAPI service responsible for AI logic, OpenAI interactions, and direct Supabase communication for chat history and AI-related settings.
+This directory will house the NestJS application, serving as the primary backend API for the platform. It will handle core business logic, data persistence, and orchestrate calls to other services like `apps/ai-chat-core/`.
+
+```
+apps/api-main/
+|-- src/
+|   |-- main.ts                # Application entry point (bootstrap, listen)
+|   |-- app.module.ts          # Root module of the application
+|   |-- app.controller.ts      # Example root controller (e.g., for health checks)
+|   |-- app.service.ts         # Example root service
+|   |-- config/                # Configuration files/modules (e.g., database, auth, env)
+|   |   |-- app.config.ts      # General application configuration
+|   |   |-- database.config.ts # Database connection configuration
+|   |-- modules/               # Feature-specific modules
+|   |   |-- auth/              # Authentication and authorization
+|   |   |   |-- auth.module.ts
+|   |   |   |-- auth.controller.ts
+|   |   |   |-- auth.service.ts
+|   |   |   |-- strategies/    # e.g., jwt.strategy.ts, local.strategy.ts
+|   |   |   |   |-- jwt.strategy.ts
+|   |   |   |-- guards/        # e.g., jwt-auth.guard.ts
+|   |   |   |   |-- jwt-auth.guard.ts
+|   |   |   |-- dto/           # Data Transfer Objects for auth
+|   |   |-- users/             # User management
+|   |   |   |-- users.module.ts
+|   |   |   |-- users.controller.ts
+|   |   |   |-- users.service.ts
+|   |   |   |-- dto/
+|   |   |   |   |-- create-user.dto.ts
+|   |   |   |   |-- update-user.dto.ts
+|   |   |   |-- entities/
+|   |   |   |   |-- user.entity.ts # TypeORM/Prisma entity
+|   |   |-- prompts/           # Prompt management
+|   |   |   |-- prompts.module.ts
+|   |   |   |-- prompts.controller.ts
+|   |   |   |-- prompts.service.ts
+|   |   |   |-- dto/
+|   |   |   |   |-- create-prompt.dto.ts
+|   |   |   |-- entities/
+|   |   |   |   |-- prompt.entity.ts
+|-- test/                      # E2E and unit tests
+|   |-- app.e2e-spec.ts        # Example E2E test for the main app module
+|   |-- jest-e2e.json          # Jest config for E2E tests
+|   |-- unit/                  # Unit tests for services, controllers, etc.
+|   |   |-- users.service.spec.ts
+|-- .env.example               # Example environment variables for the API server
+|-- .eslintrc.js
+|-- .gitignore
+|-- nest-cli.json              # NestJS CLI configuration file
+|-- package.json
+|-- README.md                  # README for the NestJS application
+|-- tsconfig.build.json        # TypeScript config for building the project
+|-- tsconfig.json              # Base TypeScript config for the project
+```
+
+## 3. `apps/ai-chat-core/` (Python FastAPI AI Chat Core Service)
+
+This directory will house the Python FastAPI service responsible for AI logic, OpenAI interactions, and potentially direct Supabase communication for chat history and AI-related settings (though this might be centralized via `api-main` in the future). It will be called by the `apps/api-main/` (NestJS) application when AI functionalities are required.
 
 ```
 apps/ai-chat-core/
@@ -132,11 +180,11 @@ apps/ai-chat-core/
 |-- README.md
 ```
 
-## 3. `packages/`
+## 4. `packages/`
 
 This directory contains shared code and configurations used across different applications in the monorepo.
 
-### 3.1. `packages/ui/`
+### 4.1. `packages/ui/`
 Shared React components built with Shadcn UI/Radix UI and Tailwind CSS, intended for use in `apps/web` and potentially other future frontends.
 ```
 packages/ui/
@@ -149,7 +197,7 @@ packages/ui/
 |-- tsconfig.json
 ```
 
-### 3.2. `packages/config/`
+### 4.2. `packages/config/`
 Shared configurations for tools like ESLint, Prettier, TypeScript.
 ```
 packages/config/
@@ -157,22 +205,25 @@ packages/config/
 |   |-- base.js
 |   |-- nextjs.js
 |   |-- react.js
+|   |-- nestjs.js              # Added config for NestJS
 |-- prettier/
 |   |-- index.js
 |-- tsconfig/
 |   |-- base.json
 |   |-- nextjs.json
 |   |-- react-library.json
+|   |-- nestjs.json            # Added tsconfig for NestJS apps/libs
 ```
 
-### 3.3. `packages/types/`
-Shared TypeScript type definitions and interfaces used across `apps/web` and potentially by `apps/ai-chat-core` if communication involves complex shared structures (though direct DB types might be more relevant for AI Core).
+### 4.3. `packages/types/`
+Shared TypeScript type definitions and interfaces used across `apps/web`, `apps/api-main`, and potentially by `apps/ai-chat-core` if communication involves complex shared structures.
 ```
 packages/types/
 |-- src/
 |   |-- index.ts
 |   |-- user.ts
 |   |-- prompt.ts
+|   |-- api-response.ts        # Example for shared API response structures
 |-- package.json
 |-- tsconfig.json
 ```
