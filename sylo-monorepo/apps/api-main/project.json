@@ -5,33 +5,30 @@
   "projectType": "application",
   "targets": {
     "build": {
-      "executor": "@nx/nest:build",
-      "outputs": ["{options.outputPath}"],
+      "executor": "nx:run-commands",
+      "outputs": ["{projectRoot}/dist"],
       "options": {
-        "outputPath": "dist/apps/api-main",
-        "main": "apps/api-main/src/main.ts",
-        "tsConfig": "apps/api-main/tsconfig.build.json",
-        "assets": ["apps/api-main/src/assets"]
+        "command": "cd apps/api-main && npx nest build",
+        "cwd": "."
       },
       "configurations": {
         "production": {
-          "optimization": true,
-          "extractLicenses": true,
-          "inspect": false
+          "command": "cd apps/api-main && npx nest build --prod"
         }
       }
     },
     "serve": {
-      "executor": "@nx/nest:serve",
+      "executor": "nx:run-commands",
       "options": {
-        "buildTarget": "api-main:build"
+        "command": "npx nest start --watch",
+        "cwd": "apps/api-main"
       },
       "configurations": {
         "development": {
-          "buildTarget": "api-main:build:development"
+          "command": "npx nest start --watch --debug"
         },
         "production": {
-          "buildTarget": "api-main:build:production"
+          "command": "npx nest start --prod"
         }
       }
     },

@@ -1,6 +1,6 @@
 # Directory Structure
 
-This document outlines the proposed initial directory structure for the Design Studio Productivity App monorepo. The monorepo will be managed using a tool like Nx or Turborepo.
+This document outlines the directory structure for the Design Studio Productivity App monorepo. The monorepo is managed using [Nx](https://nx.dev/).
 
 ## Monorepo Root
 
@@ -26,7 +26,8 @@ This document outlines the proposed initial directory structure for the Design S
 |-- DIRECTORY_STRUCTURE.md
 |-- PROJECT_PLAN.md
 |-- README.md                  # Monorepo root README
-# ... other monorepo config files (nx.json, turbo.json, etc.)
+|-- nx.json                    # Nx configuration file
+|-- webpack.config.js          # Webpack configuration for api-main
 ```
 
 ## 1. `apps/web/` (Next.js Frontend Application)
@@ -88,7 +89,9 @@ apps/web/
 
 ## 2. `apps/api-main/` (NestJS Primary Backend)
 
-This directory will house the NestJS application, serving as the primary backend API for the platform. It will handle core business logic, data persistence, and orchestrate calls to other services like `apps/ai-chat-core/`.
+This directory houses the NestJS application, serving as the primary backend API for the platform. It handles core business logic, data persistence, and orchestrates calls to other services like `apps/ai-chat-core/`.
+
+**Note on Build Configuration:** The NestJS application is built using the native NestJS build system through Nx's `nx:run-commands` executor. This approach was chosen to avoid issues with the `@nx/nest` package's missing executors. See the [DEVELOPMENT.md](DEVELOPMENT.md) file for more details on this configuration.
 
 ```
 apps/api-main/
@@ -145,7 +148,7 @@ apps/api-main/
 
 ## 3. `apps/ai-chat-core/` (Python FastAPI AI Chat Core Service)
 
-This directory will house the Python FastAPI service responsible for AI logic, OpenAI interactions, and potentially direct Supabase communication for chat history and AI-related settings (though this might be centralized via `api-main` in the future). It will be called by the `apps/api-main/` (NestJS) application when AI functionalities are required.
+This directory houses the Python FastAPI service responsible for AI logic, OpenAI interactions, and potentially direct Supabase communication for chat history and AI-related settings (though this might be centralized via `api-main` in the future). It is called by the `apps/api-main/` (NestJS) application when AI functionalities are required.
 
 ```
 apps/ai-chat-core/

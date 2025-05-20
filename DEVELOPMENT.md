@@ -116,25 +116,105 @@ This section details the investigation into issues with Nx target execution in t
 **Status for `ai-chat-core` Target Issue:**
 *   Briefly reviewed [`sylo-monorepo/apps/ai-chat-core/project.json`](sylo-monorepo/apps/ai-chat-core/project.json:1). The `install-deps` target using `nx:run-commands` with `cwd: "apps/ai-chat-core"` and command `sh ./scripts/install-deps.sh` appears correctly configured. This issue was not further pursued pending resolution of the `api-main` problem, as environment instability (like Node version or Nx core issues) could also affect this.
 
-**Current Status (Paused for Documentation):**
-*   The `api-main` build (`npx nx build api-main`) still fails with `"The "@nx/nest" package does not support Nx executors."`
-*   The primary suspect is an incomplete/corrupted `@nx/nest` package in `node_modules`.
-*   The next planned debugging step was to attempt a more forceful reinstallation of `@nx/nest` by:
-    1.  Removing `@nx/nest` from the root `sylo-monorepo/package.json`'s `devDependencies`.
-    2.  Running `npm install` (by user in their v20.19.2 environment) to remove it.
-    3.  Adding `@nx/nest` back to `devDependencies`.
-    4.  Running `npm install` again (by user) to attempt a completely fresh fetch and installation of the package.
-    This process was interrupted.
+**Current Status (RESOLVED - 2025-05-20):**
+*   The `api-main` build issue has been successfully resolved!
+*   **Root Cause:** The `@nx/nest` package (versions 21.0.0 through 21.0.3) does not include an `executors.json` file or an `"executors"` field in its `package.json`, which explains why Nx couldn't find any executors in it.
+*   **Solution Implemented:**
+    1. We simplified the build configuration in `project.json` to use `nx:run-commands` with a direct call to NestJS's own build system (`npx nest build`).
+    2. We changed the output path format to use `{projectRoot}/dist`, which correctly resolves to NestJS's default output location.
+    3. This approach bypasses the complex Nx webpack configuration while still allowing Nx to track the outputs for caching purposes.
+
+**Current Configuration:**
+```json
+// sylo-monorepo/apps/api-main/project.json (build target)
+"build": {
+  "executor": "nx:run-commands",
+  "outputs": ["{projectRoot}/dist"],
+  "options": {
+    "command": "cd apps/api-main && npx nest build",
+    "cwd": "."
+  },
+  "configurations": {
+    "production": {
+      "command": "cd apps/api-main && npx nest build --prod"
+    }
+  }
+}
+```
+
+**Benefits of This Approach:**
+1. **Simplicity:** The configuration is much simpler and easier to understand.
+2. **Reliability:** We're using NestJS's native build system, which is well-tested for NestJS applications.
+3. **Compatibility:** We avoid the issues with the `@nx/nest` package's missing executors.
+4. **Maintainability:** The configuration is less likely to break with future updates to Nx or NestJS.
+
+**Handover Notes:**
+* The build now works correctly with `npx nx build api-main`
+* The output is generated in `apps/api-main/dist` (NestJS's default location)
+* The `serve` target is already configured correctly to use `nx:run-commands` with `npx nest start`
+* If you encounter similar issues with other NestJS applications in the monorepo, consider applying the same approach
 
 ---
+
+## AI Chat Core - NestJS Integration
+
+The AI Chat Core service has been integrated with the NestJS backend to provide AI-powered features to the frontend. This section describes how to use this integration.
+
+### Overview
+
+The NestJS backend communicates with the AI Chat Core service via HTTP requests. The `AiChatCoreModule` in the NestJS backend provides a service and controller for this communication:
+
+- `AiChatCoreService`: Makes HTTP requests to the AI Chat Core API
+- `AiChatCoreController`: Exposes endpoints for the frontend to use
+
+### Environment Configuration
+
+To configure the NestJS backend to communicate with the AI Chat Core service, add the following to your `.env` file:
+
+```
+AI_CHAT_CORE_URL=http://localhost:4000
+```
+
+### Available Endpoints
+
+The following endpoints are available in the NestJS backend for interacting with the AI Chat Core:
+
+- `POST /ai-chat/completion`: Generate a chat completion
+- `POST /ai-chat/sessions`: Create a new chat session
+- `DELETE /ai-chat/sessions/:sessionId`: Delete a chat session
+- `GET /ai-chat/settings`: Get user settings
+- `PUT /ai-chat/settings`: Update user settings
+- `POST /ai-chat/prompts/improve`: Improve a prompt
+- `POST /ai-chat/prompts/categorize`: Suggest categories for a prompt
+
+All endpoints require authentication using the JWT strategy.
+
+## Development Roadmap and Process
+
+The project follows a structured development roadmap outlined in [PROJECT_PLAN.md](PROJECT_PLAN.md). This roadmap is organized into phases with clear milestones and task tracking to help coordinate development efforts.
+
+### Development Process
+
+1. **Task Selection**: Select tasks from the current phase in the roadmap
+2. **Implementation**: Follow the coding standards in [CODING_STANDARDS.md](CODING_STANDARDS.md)
+3. **Testing**: Write appropriate tests for your implementation
+4. **Code Review**: Submit a PR for review by at least one team member
+5. **Deployment**: Once approved, changes will be deployed via CI/CD
+
+### Tracking Progress
+
+- Use the checkboxes in the roadmap to track completed tasks
+- Update the "Current Progress" section in the roadmap when significant milestones are reached
+- Keep the README.md "Implementation Status" section in sync with the roadmap
 
 ## Future Development for AI Productivity Suite
 
 As the advanced AI Productivity Suite features (e.g., AI Calendar, AI Task Manager, AI Meeting Notetaker, etc., as detailed in the [PROJECT_PLAN.md](PROJECT_PLAN.md)) are developed, this document will be updated. Specific sections will be added to cover:
 
-*   Setup instructions for any new services or components (e.g., transcription services, advanced scheduling engines).
-*   Development workflows unique to these new features.
-*   Testing strategies and tools for AI-specific functionalities.
-*   Configuration details for new integrations or AI models.
+*   Setup instructions for any new services or components (e.g., transcription services, advanced scheduling engines)
+*   Development workflows unique to these new features
+*   Testing strategies and tools for AI-specific functionalities
+*   Configuration details for new integrations or AI models
+*   Performance optimization guidelines for AI-powered features
 
 The aim is to keep this development guide comprehensive and up-to-date as the project expands its capabilities.

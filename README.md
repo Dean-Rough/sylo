@@ -33,7 +33,7 @@ Sylo is being developed to offer a suite of intelligent tools to streamline your
 
 ## Monorepo Structure
 
-This repository is a monorepo managed by [Nx/Turborepo - *Specify Chosen Tool Here*].
+This repository is a monorepo managed by [Nx](https://nx.dev/).
 
 *   `apps/`: Contains the individual applications:
     *   `web/`: The Next.js frontend.
@@ -46,14 +46,14 @@ This repository is a monorepo managed by [Nx/Turborepo - *Specify Chosen Tool He
 
 ## Getting Started
 
-The initial directory structure has been established. Detailed instructions for setting up the development environment, installing dependencies using the chosen monorepo tool, and running the applications will be added as these components are further developed.
+The initial directory structure has been established and key components have been implemented. Below are instructions for setting up the development environment, installing dependencies, and running the applications.
 
 ### Prerequisites
 
-*   Node.js (specify version)
-*   npm/yarn/pnpm (specify preferred package manager)
-*   Python (specify version for AI Chat Core)
-*   Poetry (or pip for Python package management)
+*   Node.js v20.19.x (recommended for Nx compatibility)
+*   npm (preferred package manager)
+*   Python 3.10+ (for AI Chat Core)
+*   pip (for Python package management)
 *   Docker (for running local instances of Supabase or other services if needed)
 *   Access to Supabase project credentials.
 *   OpenAI API key.
@@ -63,7 +63,7 @@ The initial directory structure has been established. Detailed instructions for 
 
 1.  **Initial Directory Structure:** The foundational directory structure as defined in [`DIRECTORY_STRUCTURE.md`](DIRECTORY_STRUCTURE.md:20) has been created. This includes the main `apps/`, `packages/`, and `.github/WORKFLOWS/` directories, along with their initial subdirectories ([`apps/web/`](apps/web/), [`apps/api-main/`](apps/api-main/), [`apps/ai-chat-core/`](apps/ai-chat-core/), [`packages/ui/`](packages/ui/), etc.) and placeholder `.env.example` files in [`apps/web/.env.example`](apps/web/.env.example:0) and [`apps/ai-chat-core/.env.example`](apps/ai-chat-core/.env.example:0).
 2.  Clone the repository (if you haven't already).
-3.  Install root dependencies: `[npm/yarn/pnpm] install` (Note: Monorepo tooling like Nx or Turborepo setup is pending).
+3.  Install root dependencies: `npm install` in the `sylo-monorepo` directory.
 4.  Set up environment variables:
     *   Copy the `.env.example` files located in [`apps/web/`](apps/web/) and [`apps/ai-chat-core/`](apps/ai-chat-core/) to `.env` (or `.env.local` for Next.js within `apps/web/`).
     *   Fill in the required credentials and configuration values.
@@ -87,7 +87,58 @@ cd apps/ai-chat-core
 ```
 The service will be available at `http://0.0.0.0:4000`.
 
+### API Main (`apps/api-main/`)
+
+To build the API Main service:
+```bash
+cd sylo-monorepo
+npx nx build api-main
+```
+
+To start the API Main service in development mode:
+```bash
+cd sylo-monorepo
+npx nx serve api-main
+```
+
+The service will be available at `http://localhost:3000`.
+
 *(Instructions for other applications, tests, linting, etc., will be added as they are developed.)*
+
+## Implementation Status (May 2025)
+
+The project is currently in Phase 0 of our development roadmap. For a detailed view of our progress and future plans, please refer to the [PROJECT_PLAN.md](PROJECT_PLAN.md) document, which contains our comprehensive roadmap with task tracking.
+
+### Completed Components
+
+1. **AI Chat Core (Python/FastAPI)**
+   - Full implementation of the AI Chat Core service with OpenAI integration
+   - Database-backed chat memory using Supabase
+   - User settings management
+   - Prompt improvement and categorization functionality
+   - RESTful API with comprehensive documentation
+
+2. **API Main (NestJS)**
+   - Integration with the AI Chat Core service
+   - Authentication with Supabase JWT
+   - CRUD operations for the Prompt Repository
+   - API endpoints for chat, user settings, and prompts
+
+### In Progress
+
+1. **Google API Integration**
+   - Integration with Google Calendar and other Google services
+
+2. **Frontend (Next.js)**
+   - Implementation of the user interface
+   - Authentication flow
+   - Chat interface
+   - Prompt Repository UI
+   - User Settings UI
+
+### Next Steps
+
+Our immediate focus is on completing the frontend implementation and Google API integration to deliver a fully functional MVP. After that, we'll move on to Phase 1 of our roadmap, which includes core feature modules and key integrations.
 
 ## Contributing
 
@@ -95,4 +146,4 @@ Please read [CODING_STANDARDS.md](CODING_STANDARDS.md) before contributing. All 
 
 ---
 
-This README will be expanded as the project develops.
+This README will be updated as the project develops further.
