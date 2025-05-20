@@ -45,6 +45,7 @@ Establish a stable, scalable architecture using Vercel for the frontend, a dedic
 - [ ] (Optional MVP) API endpoint for "auto-categorize prompt".
 
 #### 2.3.4. AI Chat Core (Python/FastAPI - Separate Service)
+- The basic FastAPI service structure for `ai-chat-core` has been established, and the service is now runnable. Further MVP features (OpenAI integration, chat memory, etc.) are pending.
 *   **Core Design Principles:**
     - [ ] OpenAI Model Integration: Designed to use various OpenAI models (text, image generation).
     - [ ] Multi-model Orchestration Logic: (Future enhancement) Logic to select the best model for a given query.

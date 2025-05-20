@@ -56,9 +56,9 @@ apps/web/
 |   |   |-- api/               # Next.js API Routes (BFF, auth callbacks)
 |   |   |   |-- auth/
 |   |   |   |   |-- [...nextauth]/ # e.g., NextAuth.js with Supabase adapter
-|   |   |   |   |-- callback/    # e.g., OAuth callbacks
-|   |   |   |-- health/        # Example health check for the frontend app itself
-|   |   |   |   |-- route.ts
+|   |   |   |-- callback/    # e.g., OAuth callbacks
+|   |   |-- health/        # Example health check for the frontend app itself
+|   |   |   |-- route.ts
 |   |   |-- favicon.ico
 |   |   |-- globals.css        # Global styles (Tailwind base, etc.)
 |   |   |-- layout.tsx         # Root layout
@@ -125,6 +125,7 @@ apps/api-main/
 |   |   |   |-- prompts.service.ts
 |   |   |   |-- dto/
 |   |   |   |   |-- create-prompt.dto.ts
+|   |   |   |   |-- update-prompt.dto.ts
 |   |   |   |-- entities/
 |   |   |   |   |-- prompt.entity.ts
 |-- test/                      # E2E and unit tests

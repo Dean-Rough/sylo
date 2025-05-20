@@ -59,7 +59,23 @@ The initial directory structure has been established. Detailed instructions for 
 
 ## Development
 
-*(Commands for running each application in development mode, running tests, linting, etc.)*
+### AI Chat Core (`apps/ai-chat-core/`)
+
+To start the AI Chat Core service in development mode:
+
+Navigate to the service directory and run the startup script:
+```bash
+cd apps/ai-chat-core
+./scripts/go.sh
+```
+Alternatively, you can use the `start-dev.sh` script directly:
+```bash
+cd apps/ai-chat-core
+./scripts/start-dev.sh
+```
+The service will be available at `http://0.0.0.0:4000`.
+
+*(Instructions for other applications, tests, linting, etc., will be added as they are developed.)*
 
 ## Contributing
 
