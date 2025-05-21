@@ -1,10 +1,11 @@
 from typing import Optional, List, Dict, Any
 from uuid import UUID
-from fastapi import APIRouter, Depends, HTTPException, Header
+from fastapi import APIRouter, Depends, HTTPException, Header, Query
 from app.models.chat import ChatRequest, ChatResponse, Message, ChatHistoryEntry
-from app.services.openai_service import openai_service
+from app.services.model_service import model_orchestrator
 from app.crud.crud_chat_history import chat_history_repository
 from app.crud.crud_user_settings import user_settings_repository
+from app.core.config import settings
 
 router = APIRouter(prefix="/chat", tags=["chat"])
 
@@ -100,8 +101,8 @@ async def chat_completion(
                 )
             )
     
-    # Call OpenAI API
-    response = await openai_service.generate_chat_completion(
+    # Call the appropriate model service via the orchestrator
+    response = await model_orchestrator.generate_completion(
         messages=all_messages,
         model=request.model,
         temperature=request.temperature,
@@ -189,3 +190,44 @@ async def delete_session(
     """
     success = await chat_history_repository.delete_session(user_id, session_id)
     return {"success": success}
+
+
+@router.get("/models", response_model=List[Dict[str, Any]])
+async def list_available_models() -> List[Dict[str, Any]]:
+    """
+    List all available models with their configurations.
+    
+    Returns:
+        List of model configurations.
+    """
+    return model_orchestrator.get_available_models()
+
+
+@router.get("/models/{model_id}", response_model=Dict[str, Any])
+async def get_model_info(model_id: str) -> Dict[str, Any]:
+    """
+    Get information about a specific model.
+    
+    Args:
+        model_id: The ID of the model to get information about.
+        
+    Returns:
+        Model configuration.
+        
+    Raises:
+        HTTPException: If the model is not found.
+    """
+    model_info = model_orchestrator.get_model_info(model_id)
+    if not model_info:
+        raise HTTPException(status_code=404, detail=f"Model '{model_id}' not found")
+    
+    return {
+        "id": model_id,
+        "provider": model_info.provider,
+        "supports_tools": model_info.supports_tools,
+        "supports_vision": model_info.supports_vision,
+        "supports_streaming": model_info.supports_streaming,
+        "context_window": model_info.context_window,
+        "cost_per_1k_input": model_info.cost_per_1k_input,
+        "cost_per_1k_output": model_info.cost_per_1k_output,
+    }

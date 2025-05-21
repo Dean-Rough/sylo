@@ -1,0 +1,104 @@
+name: Frontend CI/CD
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'sylo-monorepo/apps/web/**'
+      - 'sylo-monorepo/packages/ui/**'
+      - 'sylo-monorepo/packages/types/**'
+      - 'sylo-monorepo/packages/config/**'
+      - '.github/WORKFLOWS/frontend.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'sylo-monorepo/apps/web/**'
+      - 'sylo-monorepo/packages/ui/**'
+      - 'sylo-monorepo/packages/types/**'
+      - 'sylo-monorepo/packages/config/**'
+      - '.github/WORKFLOWS/frontend.yml'
+
+jobs:
+  lint-and-test:
+    name: Lint and Test
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.19.x'
+          cache: 'npm'
+          cache-dependency-path: 'sylo-monorepo/package-lock.json'
+      
+      - name: Install dependencies
+        run: |
+          cd sylo-monorepo
+          npm ci
+      
+      - name: Lint
+        run: |
+          cd sylo-monorepo
+          npx nx lint web
+      
+      - name: Test
+        run: |
+          cd sylo-monorepo
+          npx nx test web
+  
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: lint-and-test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.19.x'
+          cache: 'npm'
+          cache-dependency-path: 'sylo-monorepo/package-lock.json'
+      
+      - name: Install dependencies
+        run: |
+          cd sylo-monorepo
+          npm ci
+      
+      - name: Build
+        run: |
+          cd sylo-monorepo
+          npx nx build web
+  
+  deploy:
+    name: Deploy to Vercel
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.19.x'
+      
+      - name: Install Vercel CLI
+        run: npm install -g vercel
+      
+      - name: Deploy to Vercel
+        run: |
+          cd sylo-monorepo/apps/web
+          vercel deploy --prod --token ${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}

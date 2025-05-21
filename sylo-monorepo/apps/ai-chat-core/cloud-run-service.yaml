@@ -1,0 +1,88 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: sylo-ai-chat-core
+  annotations:
+    run.googleapis.com/launch-stage: BETA
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/minScale: "1"
+        autoscaling.knative.dev/maxScale: "10"
+        run.googleapis.com/cpu-throttling: "true"
+        run.googleapis.com/startup-cpu-boost: "true"
+        run.googleapis.com/execution-environment: "gen2"
+    spec:
+      containerConcurrency: 80
+      timeoutSeconds: 300
+      serviceAccountName: "sylo-ai-chat-core@PROJECT_ID.iam.gserviceaccount.com"
+      containers:
+        - image: gcr.io/PROJECT_ID/sylo-ai-chat-core:latest
+          ports:
+            - containerPort: 4000
+          resources:
+            limits:
+              cpu: "1"
+              memory: "2Gi"
+          env:
+            - name: ENVIRONMENT
+              value: "production"
+            - name: API_HOST
+              value: "0.0.0.0"
+            - name: API_PORT
+              value: "4000"
+            - name: API_ROOT_PATH
+              value: "/api/v1"
+            - name: LOG_LEVEL
+              value: "INFO"
+            - name: LOG_FORMAT
+              value: "json"
+            - name: ENABLE_MULTI_MODEL
+              value: "true"
+            - name: DEFAULT_MODEL
+              value: "gpt-4o"
+            - name: DEFAULT_MAX_TOKENS
+              value: "1000"
+            - name: DEFAULT_TEMPERATURE
+              value: "0.7"
+            - name: CORS_ORIGINS
+              valueFrom:
+                secretKeyRef:
+                  name: ai-chat-core-secrets
+                  key: CORS_ORIGINS
+            - name: OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: ai-chat-core-secrets
+                  key: OPENAI_API_KEY
+            - name: OPENAI_ORG_ID
+              valueFrom:
+                secretKeyRef:
+                  name: ai-chat-core-secrets
+                  key: OPENAI_ORG_ID
+            - name: ANTHROPIC_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: ai-chat-core-secrets
+                  key: ANTHROPIC_API_KEY
+            - name: SUPABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: ai-chat-core-secrets
+                  key: SUPABASE_URL
+            - name: SUPABASE_ANON_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: ai-chat-core-secrets
+                  key: SUPABASE_ANON_KEY
+            - name: SUPABASE_SERVICE_ROLE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: ai-chat-core-secrets
+                  key: SUPABASE_SERVICE_ROLE_KEY
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: ai-chat-core-secrets
+                  key: JWT_SECRET

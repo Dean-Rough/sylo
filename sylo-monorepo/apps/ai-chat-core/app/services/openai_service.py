@@ -1,24 +1,39 @@
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Union
 import openai
-from app.core.config import settings
+from app.core.config import settings, ModelConfig
+from app.services.model_service import ModelService
 
 # Configure OpenAI API key
 openai.api_key = settings.openai_api_key
+if settings.openai_org_id:
+    openai.organization = settings.openai_org_id
 
 
-class OpenAIService:
+class OpenAIService(ModelService):
     """
     Service for interacting with OpenAI models.
     """
     
-    @staticmethod
-    async def generate_chat_completion(
+    def __init__(self):
+        """
+        Initialize the OpenAI service.
+        """
+        self.supported_models = {
+            model_id: config
+            for model_id, config in settings.model_configs.items()
+            if config.provider == "openai"
+        }
+    
+    async def generate_completion(
+        self,
         messages: List[Dict[str, str]],
         model: str = "gpt-4o",
         temperature: float = 0.7,
         max_tokens: Optional[int] = None,
         tools: Optional[List[Dict[str, Any]]] = None,
-        tool_choice: Optional[str] = None
+        tool_choice: Optional[Union[str, Dict[str, Any]]] = None,
+        stream: bool = False,
+        **kwargs
     ) -> Dict[str, Any]:
         """
         Generate a chat completion using OpenAI's API.
@@ -30,16 +45,28 @@ class OpenAIService:
             max_tokens: Maximum number of tokens to generate.
             tools: List of tools available to the model.
             tool_choice: Control when the model calls functions.
+            stream: Whether to stream the response.
+            **kwargs: Additional model-specific parameters.
             
         Returns:
             Dict containing the API response.
         """
         try:
+            # Validate model
+            if not self.supports_model(model):
+                return {
+                    "error": True,
+                    "message": f"Model '{model}' is not supported by OpenAI service",
+                    "type": "UnsupportedModelError"
+                }
+            
             # Build request parameters
             params = {
                 "model": model,
                 "messages": messages,
                 "temperature": temperature,
+                "stream": stream,
+                **kwargs  # Include any additional parameters
             }
             
             # Add optional parameters if provided
@@ -65,8 +92,31 @@ class OpenAIService:
                 "type": type(e).__name__
             }
     
-    @staticmethod
-    async def improve_prompt(prompt: str) -> Dict[str, Any]:
+    async def get_model_info(self, model: str) -> Optional[ModelConfig]:
+        """
+        Get information about a specific model.
+        
+        Args:
+            model: The model identifier.
+            
+        Returns:
+            ModelConfig object containing model information, or None if not found.
+        """
+        return self.supported_models.get(model)
+    
+    def supports_model(self, model: str) -> bool:
+        """
+        Check if this service supports the specified model.
+        
+        Args:
+            model: The model identifier.
+            
+        Returns:
+            True if the model is supported, False otherwise.
+        """
+        return model in self.supported_models
+    
+    async def improve_prompt(self, prompt: str) -> Dict[str, Any]:
         """
         Use OpenAI to improve a given prompt.
         
@@ -93,13 +143,21 @@ class OpenAIService:
         ]
         
         try:
-            response = await openai.ChatCompletion.acreate(
-                model="gpt-4o",
+            response = await self.generate_completion(
                 messages=messages,
+                model=settings.default_model,
                 temperature=0.7
             )
             
-            improved_prompt = response.choices[0].message.content
+            if "error" in response and response.get("error", False):
+                return {
+                    "original_prompt": prompt,
+                    "error": True,
+                    "message": response.get("message", "Unknown error"),
+                    "success": False
+                }
+            
+            improved_prompt = response["choices"][0]["message"]["content"]
             
             return {
                 "original_prompt": prompt,
@@ -119,3 +177,7 @@ class OpenAIService:
 
 # Create a global instance of the service
 openai_service = OpenAIService()
+
+# Register with the model orchestrator
+from app.services.model_service import model_orchestrator
+model_orchestrator.register_service("openai", openai_service)

@@ -1,5 +1,8 @@
 from typing import Dict, Any, List, Optional
-from app.services.openai_service import openai_service
+import re
+import json
+from app.services.model_service import model_orchestrator
+from app.core.config import settings
 from app.models.prompt import PromptImproveRequest, PromptImproveResponse, PromptCategorizeRequest, PromptCategorizeResponse
 
 
@@ -19,8 +22,41 @@ class PromptService:
             The improved prompt response.
         """
         try:
-            # Call OpenAI service to improve the prompt
-            result = await openai_service.improve_prompt(request.prompt_text)
+            # Create a system message for prompt improvement
+            messages = [
+                {
+                    "role": "system",
+                    "content": (
+                        "You are an expert at writing effective prompts for AI systems. "
+                        "Your task is to improve the given prompt to make it clearer, "
+                        "more specific, and more likely to generate the desired response. "
+                        "Provide both an improved version and a brief explanation of your changes."
+                    )
+                },
+                {
+                    "role": "user",
+                    "content": f"Please improve this prompt: \n\n{request.prompt_text}"
+                }
+            ]
+            
+            # Call model orchestrator to improve the prompt
+            response = await model_orchestrator.generate_completion(
+                messages=messages,
+                model=request.model if request.model else settings.default_model,
+                temperature=0.7
+            )
+            
+            if "error" in response and response.get("error", False):
+                # Handle error case
+                return PromptImproveResponse(
+                    original_prompt=request.prompt_text,
+                    improved_prompt=request.prompt_text,  # Return original if error
+                    success=False,
+                    error=response.get("message", "Unknown error occurred")
+                )
+            
+            # Extract the improved prompt from the response
+            improved_prompt = response["choices"][0]["message"]["content"]
             
             if "error" in result and result.get("error", False):
                 # Handle error case
@@ -93,11 +129,11 @@ class PromptService:
                 }
             ]
             
-            # Call OpenAI API
-            response = await openai_service.generate_chat_completion(
+            # Call model orchestrator
+            response = await model_orchestrator.generate_completion(
                 messages=messages,
                 temperature=0.3,  # Lower temperature for more consistent results
-                model="gpt-4o"
+                model=request.model if request.model else settings.default_model
             )
             
             # Extract categories from response

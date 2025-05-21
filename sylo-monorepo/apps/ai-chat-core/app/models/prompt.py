@@ -2,6 +2,7 @@ from typing import List, Optional, Dict, Any
 from pydantic import BaseModel, Field
 from datetime import datetime
 from uuid import UUID
+from app.core.config import settings
 
 
 class PromptImproveRequest(BaseModel):
@@ -11,6 +12,7 @@ class PromptImproveRequest(BaseModel):
     prompt_text: str = Field(..., description="The original prompt text to improve")
     user_id: UUID = Field(..., description="The ID of the user making the request")
     prompt_id: Optional[UUID] = Field(None, description="The ID of the prompt if it exists in the repository")
+    model: Optional[str] = Field(None, description="The model to use for improvement (defaults to system default)")
 
 
 class PromptImproveResponse(BaseModel):
@@ -31,6 +33,7 @@ class PromptCategorizeRequest(BaseModel):
     prompt_text: str = Field(..., description="The prompt text to categorize")
     user_id: UUID = Field(..., description="The ID of the user making the request")
     prompt_id: Optional[UUID] = Field(None, description="The ID of the prompt if it exists in the repository")
+    model: Optional[str] = Field(None, description="The model to use for categorization (defaults to system default)")
 
 
 class PromptCategorizeResponse(BaseModel):

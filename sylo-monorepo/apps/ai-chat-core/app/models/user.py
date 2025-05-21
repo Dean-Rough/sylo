@@ -10,12 +10,14 @@ class UserSettings(BaseModel):
     """
     id: Optional[UUID] = Field(None, description="The ID of this settings entry")
     user_id: UUID = Field(..., description="The ID of the user")
-    default_model: str = Field("gpt-4o", description="The default OpenAI model to use")
+    default_model: str = Field("gpt-4o", description="The default AI model to use")
     temperature: float = Field(0.7, description="Default temperature setting (0-1)")
     max_tokens: Optional[int] = Field(None, description="Default maximum tokens to generate")
     memory_window: int = Field(10, description="Number of previous messages to include in context")
     created_at: Optional[datetime] = Field(None, description="When these settings were created")
     updated_at: Optional[datetime] = Field(None, description="When these settings were last updated")
+    preferred_models: Optional[List[str]] = Field(None, description="List of preferred models in order of preference")
+    model_specific_settings: Optional[Dict[str, Dict[str, Any]]] = Field(None, description="Settings specific to each model")
     preferences: Optional[Dict[str, Any]] = Field(None, description="Additional user preferences")
 
 
@@ -31,10 +33,12 @@ class UserSettingsUpdateRequest(BaseModel):
     Request model for updating user settings.
     """
     user_id: UUID = Field(..., description="The ID of the user")
-    default_model: Optional[str] = Field(None, description="The default OpenAI model to use")
+    default_model: Optional[str] = Field(None, description="The default AI model to use")
     temperature: Optional[float] = Field(None, description="Default temperature setting (0-1)")
     max_tokens: Optional[int] = Field(None, description="Default maximum tokens to generate")
     memory_window: Optional[int] = Field(None, description="Number of previous messages to include in context")
+    preferred_models: Optional[List[str]] = Field(None, description="List of preferred models in order of preference")
+    model_specific_settings: Optional[Dict[str, Dict[str, Any]]] = Field(None, description="Settings specific to each model")
     preferences: Optional[Dict[str, Any]] = Field(None, description="Additional user preferences")
 
 

@@ -1,0 +1,117 @@
+name: Backend CI/CD
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'sylo-monorepo/apps/api-main/**'
+      - 'sylo-monorepo/packages/types/**'
+      - 'sylo-monorepo/packages/config/**'
+      - '.github/WORKFLOWS/backend.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'sylo-monorepo/apps/api-main/**'
+      - 'sylo-monorepo/packages/types/**'
+      - 'sylo-monorepo/packages/config/**'
+      - '.github/WORKFLOWS/backend.yml'
+
+jobs:
+  lint-and-test:
+    name: Lint and Test
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.19.x'
+          cache: 'npm'
+          cache-dependency-path: 'sylo-monorepo/package-lock.json'
+      
+      - name: Install dependencies
+        run: |
+          cd sylo-monorepo
+          npm ci
+      
+      - name: Lint
+        run: |
+          cd sylo-monorepo
+          npx nx lint api-main
+      
+      - name: Test
+        run: |
+          cd sylo-monorepo
+          npx nx test api-main
+  
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: lint-and-test
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.19.x'
+          cache: 'npm'
+          cache-dependency-path: 'sylo-monorepo/package-lock.json'
+      
+      - name: Install dependencies
+        run: |
+          cd sylo-monorepo
+          npm ci
+      
+      - name: Build
+        run: |
+          cd sylo-monorepo
+          npx nx build api-main
+      
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-main-dist
+          path: sylo-monorepo/apps/api-main/dist
+  
+  deploy:
+    name: Deploy to Cloud
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: api-main-dist
+          path: sylo-monorepo/apps/api-main/dist
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.19.x'
+      
+      # This is a placeholder for the actual deployment step
+      # Replace with your actual deployment method (e.g., AWS, GCP, Azure, etc.)
+      - name: Deploy to Cloud
+        run: |
+          echo "Deploying to cloud environment..."
+          # Example deployment command (replace with actual deployment)
+          # aws s3 sync sylo-monorepo/apps/api-main/dist s3://your-bucket/api-main
+          # or
+          # gcloud app deploy sylo-monorepo/apps/api-main/app.yaml
+        env:
+          # Add any required deployment credentials as GitHub secrets
+          # AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          # AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          # or
+          # GCLOUD_SERVICE_KEY: ${{ secrets.GCLOUD_SERVICE_KEY }}

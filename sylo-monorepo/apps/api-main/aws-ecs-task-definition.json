@@ -1,0 +1,113 @@
+{
+  "family": "sylo-api-main",
+  "executionRoleArn": "arn:aws:iam::ACCOUNT_ID:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::ACCOUNT_ID:role/sylo-api-main-task-role",
+  "networkMode": "awsvpc",
+  "containerDefinitions": [
+    {
+      "name": "sylo-api-main",
+      "image": "ACCOUNT_ID.dkr.ecr.REGION.amazonaws.com/sylo-api-main:latest",
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 3000,
+          "hostPort": 3000,
+          "protocol": "tcp"
+        }
+      ],
+      "environment": [
+        {
+          "name": "NODE_ENV",
+          "value": "production"
+        },
+        {
+          "name": "PORT",
+          "value": "3000"
+        },
+        {
+          "name": "HOST",
+          "value": "0.0.0.0"
+        }
+      ],
+      "secrets": [
+        {
+          "name": "SUPABASE_URL",
+          "valueFrom": "arn:aws:ssm:REGION:ACCOUNT_ID:parameter/sylo/api-main/SUPABASE_URL"
+        },
+        {
+          "name": "SUPABASE_ANON_KEY",
+          "valueFrom": "arn:aws:ssm:REGION:ACCOUNT_ID:parameter/sylo/api-main/SUPABASE_ANON_KEY"
+        },
+        {
+          "name": "SUPABASE_SERVICE_ROLE_KEY",
+          "valueFrom": "arn:aws:ssm:REGION:ACCOUNT_ID:parameter/sylo/api-main/SUPABASE_SERVICE_ROLE_KEY"
+        },
+        {
+          "name": "JWT_SECRET",
+          "valueFrom": "arn:aws:ssm:REGION:ACCOUNT_ID:parameter/sylo/api-main/JWT_SECRET"
+        },
+        {
+          "name": "AI_CHAT_CORE_URL",
+          "valueFrom": "arn:aws:ssm:REGION:ACCOUNT_ID:parameter/sylo/api-main/AI_CHAT_CORE_URL"
+        },
+        {
+          "name": "GOOGLE_CLIENT_ID",
+          "valueFrom": "arn:aws:ssm:REGION:ACCOUNT_ID:parameter/sylo/api-main/GOOGLE_CLIENT_ID"
+        },
+        {
+          "name": "GOOGLE_CLIENT_SECRET",
+          "valueFrom": "arn:aws:ssm:REGION:ACCOUNT_ID:parameter/sylo/api-main/GOOGLE_CLIENT_SECRET"
+        },
+        {
+          "name": "GOOGLE_REDIRECT_URI",
+          "valueFrom": "arn:aws:ssm:REGION:ACCOUNT_ID:parameter/sylo/api-main/GOOGLE_REDIRECT_URI"
+        },
+        {
+          "name": "GOOGLE_API_SCOPES",
+          "valueFrom": "arn:aws:ssm:REGION:ACCOUNT_ID:parameter/sylo/api-main/GOOGLE_API_SCOPES"
+        },
+        {
+          "name": "CORS_ORIGINS",
+          "valueFrom": "arn:aws:ssm:REGION:ACCOUNT_ID:parameter/sylo/api-main/CORS_ORIGINS"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/sylo-api-main",
+          "awslogs-region": "REGION",
+          "awslogs-stream-prefix": "ecs"
+        }
+      },
+      "healthCheck": {
+        "command": [
+          "CMD-SHELL",
+          "curl -f http://localhost:3000/health || exit 1"
+        ],
+        "interval": 30,
+        "timeout": 5,
+        "retries": 3,
+        "startPeriod": 60
+      }
+    }
+  ],
+  "requiresCompatibilities": [
+    "FARGATE"
+  ],
+  "cpu": "512",
+  "memory": "1024",
+  "tags": [
+    {
+      "key": "Project",
+      "value": "Sylo"
+    },
+    {
+      "key": "Environment",
+      "value": "Production"
+    },
+    {
+      "key": "Service",
+      "value": "api-main"
+    }
+  ]
+}
