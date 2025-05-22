@@ -1,4 +1,14 @@
-import { IsNotEmpty, IsString, IsOptional, IsEnum, IsUUID, IsDateString } from 'class-validator';
+import { 
+  IsNotEmpty, 
+  IsString, 
+  IsOptional, 
+  IsEnum, 
+  IsUUID, 
+  IsDateString,
+  IsNumber,
+  Min,
+  Max
+} from 'class-validator';
 
 export class CreateTaskDto {
   @IsNotEmpty()
@@ -14,10 +24,10 @@ export class CreateTaskDto {
   description?: string;
 
   @IsOptional()
-  @IsEnum(['todo', 'in_progress', 'review', 'completed'], {
-    message: 'Status must be one of: todo, in_progress, review, completed',
+  @IsEnum(['todo', 'in_progress', 'review', 'completed', 'blocked'], {
+    message: 'Status must be one of: todo, in_progress, review, completed, blocked',
   })
-  status?: 'todo' | 'in_progress' | 'review' | 'completed' = 'todo';
+  status?: 'todo' | 'in_progress' | 'review' | 'completed' | 'blocked' = 'todo';
 
   @IsOptional()
   @IsEnum(['low', 'medium', 'high', 'urgent'], {
@@ -32,4 +42,24 @@ export class CreateTaskDto {
   @IsOptional()
   @IsDateString()
   deadline?: string;
+
+  // New AI Task Manager specific fields
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  @Max(100)
+  ai_risk_score?: number;
+
+  @IsOptional()
+  @IsNumber()
+  ai_priority_boost?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  ai_estimated_completion_time?: number;
+
+  @IsOptional()
+  @IsString()
+  ai_scheduling_notes?: string;
 }
