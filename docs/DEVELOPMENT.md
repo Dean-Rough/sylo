@@ -13,6 +13,7 @@ This document provides comprehensive instructions for development across all com
 7. [Testing](#testing)
 8. [Deployment](#deployment)
 9. [Troubleshooting](#troubleshooting)
+10. [MCP Servers](#mcp-servers)
 
 ## Development Environment Setup
 
@@ -26,6 +27,8 @@ This document provides comprehensive instructions for development across all com
 * Access to Supabase project credentials
 * OpenAI API key
 * Google Cloud Platform project for OAuth credentials
+* Supabase personal access token (for Supabase MCP server)
+* Google Drive API credentials (for Google Drive MCP server)
 
 ### Initial Setup
 
@@ -47,12 +50,30 @@ The project is organized as a monorepo managed by [Nx](https://nx.dev/). For a d
 
 ### Starting the Development Server
 
+#### Option 1: Using the Simplified Start Script (Recommended)
+
+We've created a simplified start script that handles port configuration, environment setup, and service management:
+
+```bash
+# From the project root directory
+./start-sylo-ui.sh
+```
+
+This script:
+1. Kills any processes running on port 3500
+2. Updates environment variables to use consistent ports
+3. Starts the web service on port 3500
+
+The frontend will be available at `http://localhost:3500`.
+
+#### Option 2: Manual Start
+
 ```bash
 cd sylo-monorepo
 npx nx serve web
 ```
 
-The frontend will be available at `http://localhost:4200`.
+With this approach, the frontend will be available at `http://localhost:3000` by default.
 
 ### Building for Production
 
@@ -242,3 +263,72 @@ This approach:
 1. Uses NestJS's native build system
 2. Avoids issues with the `@nx/nest` package's missing executors
 3. Is more reliable and easier to maintain
+
+### Connection Issues
+
+If you encounter connection refused errors when trying to access the UI:
+
+1. Check if the web service is running on the expected port (3500)
+2. Ensure all environment variables are properly set in the `.env` files
+3. Try using the `./start-sylo-ui.sh` script which handles port configuration and service management
+4. Check if there are any conflicting processes running on the same ports
+
+## MCP Servers
+
+The project uses Model Context Protocol (MCP) servers to extend AI assistant capabilities by connecting to external services. These servers allow AI assistants to interact with various APIs and services.
+
+### Available MCP Servers
+
+The project currently has the following MCP servers configured:
+
+1. **Google Drive MCP Server**: Allows AI assistants to interact with Google Drive files and folders
+2. **Supabase MCP Server**: Allows AI assistants to interact with Supabase projects, databases, and edge functions
+
+For a complete list of available and recommended MCP servers, see the [mcp-servers/README.md](/mcp-servers/README.md) file.
+
+### Setting Up MCP Servers
+
+MCP servers are configured in the `cline_mcp_settings.json` file in the project root. Each server requires specific configuration parameters and credentials.
+
+#### Example: Supabase MCP Server Configuration
+
+```json
+"github.com/supabase-community/supabase-mcp": {
+  "command": "npx",
+  "args": [
+    "-y",
+    "@supabase/mcp-server-supabase@latest",
+    "--access-token",
+    "your-supabase-access-token"
+  ]
+}
+```
+
+### Testing MCP Server Connections
+
+Each MCP server directory contains a `test-connection.sh` script that can be used to verify the server configuration:
+
+```bash
+# Example for Supabase MCP server
+./mcp-servers/supabase/test-connection.sh
+```
+
+### Starting MCP Servers Manually
+
+If needed, you can start MCP servers manually using the provided start scripts:
+
+```bash
+# Example for Supabase MCP server
+./mcp-servers/supabase/start-server.sh
+```
+
+### Adding New MCP Servers
+
+To add a new MCP server:
+
+1. Create a directory for the server in the `mcp-servers` directory
+2. Update the `cline_mcp_settings.json` file with the server configuration
+3. Create documentation and test scripts for the server
+4. Test the connection to ensure it's working properly
+
+For detailed instructions on specific MCP servers, refer to their respective README files in the `mcp-servers` directory.

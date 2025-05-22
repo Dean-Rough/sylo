@@ -3,6 +3,7 @@ uvicorn[standard]
 python-dotenv
 openai>=1.0.0
 supabase
-pydantic[email]
+pydantic[email]>=2.0.0
+pydantic-settings>=2.0.0
 httpx>=0.24.0
 anthropic>=0.5.0

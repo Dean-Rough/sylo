@@ -1,9 +1,14 @@
-import { useState } from "react";
-import { Send } from "lucide-react";
+"use client";
+
+import { useState, useEffect } from "react";
+import { Send, Mic, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ChatMessage } from "@/components/chat/chat-message";
+import { VoiceMode } from "@/components/chat/voice-mode";
 import { useToast } from "@/components/ui/use-toast";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 type Message = {
   id: string;
@@ -17,16 +22,22 @@ export function ChatInterface() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [voiceModeEnabled, setVoiceModeEnabled] = useState(false);
+  const [lastAssistantMessage, setLastAssistantMessage] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!input.trim()) return;
     
+    await sendMessage(input.trim());
+  };
+
+  const sendMessage = async (content: string) => {
     const userMessage: Message = {
       id: Date.now().toString(),
       role: "user",
-      content: input.trim(),
+      content,
       timestamp: new Date(),
     };
     
@@ -47,6 +58,7 @@ export function ChatInterface() {
       };
       
       setMessages((prev) => [...prev, assistantMessage]);
+      setLastAssistantMessage(assistantMessage.content);
     } catch (error) {
       toast({
         title: "Error",
@@ -58,8 +70,32 @@ export function ChatInterface() {
     }
   };
 
+  const handleSpeechResult = (text: string) => {
+    if (text.trim()) {
+      setInput(text);
+      sendMessage(text);
+    }
+  };
+
   return (
     <div className="flex h-[calc(100vh-12rem)] flex-col rounded-lg border">
+      <div className="border-b p-2 flex justify-between items-center">
+        <h2 className="font-semibold">AI Chat</h2>
+        <div className="flex items-center gap-2">
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="voice-mode"
+              checked={voiceModeEnabled}
+              onCheckedChange={setVoiceModeEnabled}
+            />
+            <Label htmlFor="voice-mode">Voice Mode</Label>
+          </div>
+          <Button variant="ghost" size="icon" title="Chat Settings">
+            <Settings className="h-4 w-4" />
+          </Button>
+        </div>
+      </div>
+      
       <div className="flex-1 overflow-y-auto p-4">
         {messages.length === 0 ? (
           <div className="flex h-full items-center justify-center">
@@ -67,6 +103,7 @@ export function ChatInterface() {
               <h3 className="text-lg font-medium">Welcome to Sylo Chat</h3>
               <p className="text-sm text-muted-foreground">
                 Start a conversation with your AI assistant
+                {voiceModeEnabled && " using voice or text"}
               </p>
             </div>
           </div>
@@ -79,10 +116,18 @@ export function ChatInterface() {
         )}
       </div>
       
-      <div className="border-t p-4">
+      <div className="border-t p-4 space-y-2">
+        {voiceModeEnabled && (
+          <VoiceMode
+            onSpeechResult={handleSpeechResult}
+            isProcessing={isLoading}
+            lastAssistantMessage={lastAssistantMessage}
+          />
+        )}
+        
         <form onSubmit={handleSubmit} className="flex gap-2">
           <Textarea
-            placeholder="Type your message here..."
+            placeholder={voiceModeEnabled ? "Type or use voice input..." : "Type your message here..."}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             className="min-h-[60px] flex-1 resize-none"

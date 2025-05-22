@@ -1,52 +1,47 @@
-# Design Studio Productivity App
+# Sylo - Design Studio Productivity App
 
-Welcome to the Design Studio Productivity App monorepo! This project aims to create a comprehensive, AI-powered productivity suite for design studios. It's architected around an intelligent AI chat interface that orchestrates a wide array of features to automate tasks, enhance project management, streamline communication, and boost overall efficiency.
+Sylo is a comprehensive productivity application designed specifically for design studios, combining AI assistance, project management, and Google Workspace integration.
+
+## Features
+
+- AI-powered chat interface for design and productivity assistance
+- Project and task management with dependencies and timelines
+- Google Workspace integration (Calendar, Drive)
+- Team collaboration tools
+- Customizable AI behavior through user and team settings
+- Voice mode for hands-free interaction
+
+## Implementation Status
+
+The project is currently in Phase 1 development. See [ROADMAP.md](./docs/ROADMAP.md) for detailed progress tracking.
 
 ## Documentation
 
-All project documentation is now located in the `/docs` directory:
+- [Architecture](./docs/ARCHITECTURE.md) - System architecture and components
+- [Development Guide](./docs/DEVELOPMENT.md) - Setup and development instructions
+- [Roadmap](./docs/ROADMAP.md) - Development phases and progress tracking
+- [Product Requirements](./docs/PRD.md) - Product requirements and specifications
+- [Changelog](./docs/CHANGELOG.md) - Version history and changes
 
-- [Architecture](./docs/ARCHITECTURE.md) - System architecture and directory structure
-- [Changelog](./docs/CHANGELOG.md) - Record of all notable changes
-- [Development Guide](./docs/DEVELOPMENT.md) - Development setup and guidelines
-- [Product Requirements](./docs/PRD.md) - Product Requirements Document
-- [Roadmap](./docs/ROADMAP.md) - Project roadmap with progress tracking
+## MCP Servers
 
-## Overview
+Sylo uses Model Context Protocol (MCP) servers to extend AI assistant capabilities:
 
-This application leverages a modern technology stack to deliver a seamless and powerful user experience:
+1. **Google Drive MCP Server** - Allows AI assistants to interact with Google Drive files and folders
+2. **Supabase MCP Server** - Allows AI assistants to interact with Supabase projects, databases, and edge functions
 
-- **Frontend:** Next.js (React) with TypeScript, styled using Shadcn UI / Radix UI + Tailwind CSS, hosted on Vercel.
-- **Backend API:** A dedicated NestJS application (TypeScript) handles the primary backend logic, including interactions with Supabase, orchestration of the AI Chat Core, and other API functionalities.
-- **Database & Authentication:** Supabase (PostgreSQL) provides the database, user authentication (Google OAuth), and storage capabilities.
-- **AI Chat Core:** A separate Python FastAPI service handles advanced AI logic, OpenAI model interactions, and manages persistent chat memory and user AI preferences via Supabase.
-
-## Project Status
-
-The project has completed Phase 0 (Foundational MVP - Core Architecture & AI Interaction) and is now preparing for Phase 1 (Core Feature Modules & Key Integrations).
-
-### Completed Components
-
-1. **AI Chat Core (Python/FastAPI)**
-   - Full implementation with OpenAI integration
-   - Database-backed chat memory using Supabase
-   - User settings management
-   - Prompt improvement and categorization functionality
-
-2. **API Main (NestJS)**
-   - Integration with the AI Chat Core service
-   - Authentication with Supabase JWT
-   - CRUD operations for the Prompt Repository
-   - API endpoints for chat, user settings, and prompts
-   - Google API integration
-
-3. **Frontend (Next.js)**
-   - Implementation of the user interface
-   - Authentication flow
-   - Chat interface
-   - Prompt Repository UI
-   - User Settings UI
+For more information on MCP servers, see the [mcp-servers/README.md](./mcp-servers/README.md) file.
 
 ## Getting Started
 
-For detailed setup instructions, please refer to the [Development Guide](./docs/DEVELOPMENT.md).
+1. Clone the repository
+2. Follow the setup instructions in [DEVELOPMENT.md](./docs/DEVELOPMENT.md)
+3. Use the provided start script to launch the application:
+
+```bash
+./start-sylo-ui.sh
+```
+
+## License
+
+Copyright © 2025 Sylo Design Studio. All rights reserved.

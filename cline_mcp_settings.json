@@ -1,0 +1,23 @@
+{
+  "mcpServers": {
+    "github.com/modelcontextprotocol/servers/tree/main/src/gdrive": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-gdrive"
+      ],
+      "env": {
+        "GDRIVE_CREDENTIALS_PATH": "/Users/deannewton/Documents/Sylo/mcp-servers/gdrive/.gdrive-server-credentials.json"
+      }
+    },
+    "github.com/supabase-community/supabase-mcp": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@supabase/mcp-server-supabase@latest",
+        "--access-token",
+        "sbp_7aaa102cb4c4c07917d0b55dc681b0bd738aebe8"
+      ]
+    }
+  }
+}

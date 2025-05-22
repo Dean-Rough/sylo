@@ -1,14 +1,17 @@
+"use client";
+
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { 
-  LayoutDashboard, 
-  MessageSquare, 
-  FileText, 
-  Settings, 
+import {
+  LayoutDashboard,
+  MessageSquare,
+  FileText,
+  Settings,
   Lightbulb,
   Calendar,
   CheckSquare,
-  Users
+  Users,
+  Globe
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -48,10 +51,9 @@ const sidebarNavItems: SideNavItem[] = [
     icon: Settings,
   },
   {
-    title: "Calendar",
-    href: "/calendar",
-    icon: Calendar,
-    disabled: true,
+    title: "Workspace",
+    href: "/workspace",
+    icon: Globe,
   },
   {
     title: "Team",

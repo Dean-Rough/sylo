@@ -1,5 +1,6 @@
-from typing import Dict, List, Optional
-from pydantic import BaseSettings, Field, validator
+from typing import Dict, List, Optional, Any
+from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import Field, field_validator, model_validator
 
 
 class ModelConfig(BaseSettings):
@@ -16,6 +17,11 @@ class ModelConfig(BaseSettings):
     cost_per_1k_output: float = 0.0
     context_window: int = 8192
     priority: int = 0  # Lower number means higher priority
+    
+    model_config = SettingsConfigDict(
+        arbitrary_types_allowed=True,
+        extra='ignore'
+    )
 
 
 class Settings(BaseSettings):
@@ -115,24 +121,26 @@ class Settings(BaseSettings):
         )
     }
     
-    @validator('available_models')
-    def parse_available_models(cls, v, values):
+    @field_validator('available_models')
+    def parse_available_models(cls, v):
         if isinstance(v, str):
             return [model.strip() for model in v.split(',')]
         return v
     
-    @validator('available_models')
-    def validate_available_models(cls, v, values):
-        model_configs = values.get('model_configs', {})
-        for model in v:
+    @model_validator(mode='after')
+    def validate_available_models(self) -> 'Settings':
+        model_configs = self.model_configs
+        for model in self.available_models:
             if model not in model_configs:
                 raise ValueError(f"Model '{model}' is not configured in model_configs")
-        return v
+        return self
     
-    class Config:
-        env_file = ".env"
-        env_file_encoding = "utf-8"
-        case_sensitive = False
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        case_sensitive=False,
+        extra='ignore'
+    )
 
 
 # Create a global settings instance
