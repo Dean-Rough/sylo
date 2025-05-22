@@ -1,159 +1,105 @@
-# Project Roadmap
+# Sylo Project Roadmap
 
-This document outlines the development roadmap for the Design Studio Productivity App, organized into phases with clear milestones and tasks.
+## Current Status and Achievements
 
-## Phase 0: Foundational MVP - Core Architecture & AI Interaction (May 2025)
-*Completed*
+### Security and Configuration Management
+- Implemented comprehensive security cleanup for environment configurations
+- Removed sensitive keys from all .env.example files
+- Established a robust template for environment variable management
+- Cleaned repository history to eliminate potential key exposure
 
-### Project Setup & DevOps
-- [x] Initialize monorepo structure with Nx
-- [x] Set up CI/CD with GitHub Actions
-  - [x] Deploy Next.js frontend to Vercel
-  - [x] Deploy NestJS backend to cloud environment
-  - [x] Deploy AI Chat Core to cloud environment
-- [x] Configure secure environment variable management
+### Multi-Model AI Architecture
+- Developed a flexible model orchestration system in AI Chat Core
+- Supported multiple AI providers (OpenAI, Anthropic)
+- Implemented dynamic model selection capabilities
+- Created configurable model settings with provider-specific details
 
-### Supabase Setup
-- [x] Initialize Supabase project
-- [x] Set up database schema
-  - [x] `users` & `profiles` tables
-  - [x] `user_settings` table
-  - [x] `chat_history` table
-  - [x] `prompt_repository` table
-  - [x] `teams` table (basic structure)
-- [x] Configure Row Level Security (RLS)
-- [x] Enable Google OAuth 2.0 authentication
+### Environment Configuration
+- Standardized .env.example files across applications
+- Created clear, secure templates for configuration
+- Ensured no sensitive information is committed to the repository
 
-### Backend Logic (NestJS)
-- [x] Handle authenticated requests from frontend
-- [x] Implement Supabase integration
-- [x] Create CRUD operations for Prompt Repository
-- [x] Build AI Chat Core orchestration
-- [x] Develop API endpoints for prompt improvement
-- [x] Implement auto-categorize prompt functionality
-- [x] Integrate with Google APIs (Calendar, etc.)
-  - [x] Set up OAuth token management
-  - [x] Create API endpoints for Google service interactions
+## Immediate Priorities
 
-### AI Chat Core (Python/FastAPI)
-- [x] Set up FastAPI service structure
-- [x] Implement OpenAI model integration (GPT-4o)
-- [x] Create database-backed chat memory
-- [x] Build user settings management
-- [x] Develop prompt improvement functionality
-- [x] Implement prompt categorization
-- [x] Add multi-model orchestration logic
+### AI Chat Core Enhancements
+1. Advanced Model Selection Strategy
+   - Develop comprehensive model selection algorithm
+   - Implement performance-based model routing
+   - Create dynamic cost and capability evaluation
 
-### Frontend (Next.js)
-- [x] Create application shell and navigation
-- [x] Implement Google login/authentication flow
-- [x] Build AI chat interface
-- [x] Develop User Settings page
-- [x] Create Prompt Repository page
-  - [x] View, search, filter prompts
-  - [x] Create, edit, delete prompts
-  - [x] Prompt improvement interface
-  - [x] Category management
+2. Model Capabilities Expansion
+   - Integrate additional AI providers
+   - Develop comprehensive model metadata tracking
+   - Implement model-specific feature detection
 
-## Phase 1: Core Feature Modules & Key Integrations (Q3 2025)
-*Completed - May 21, 2025*
+### Security Improvements
+1. Secret Management
+   - Design secure credential rotation mechanism
+   - Implement environment variable validation
+   - Create automated secret scanning tools
 
-### Project Management
-- [x] Implement Asana-style project manager
-  - [x] Task creation and assignment
-  - [x] Deadline management
-  - [x] Project visualization
-  - [x] Task dependencies
+2. Deployment Optimization
+   - Refine Vercel and cloud deployment configurations
+   - Develop CI/CD pipeline for configuration management
+   - Create comprehensive deployment documentation
 
-### Google Workspace Integration
-- [x] Calendar integration (read/write)
-- [x] Basic Drive interaction
-- [x] Meeting scheduling
+### Feature Development
+1. AI Interaction Improvements
+   - Expand chat interface capabilities
+   - Implement advanced prompt engineering tools
+   - Develop team and user-specific model preferences
 
-### Additional Core Features
-- [x] Whiteboard/Quick Notes functionality
-- [x] Team settings for AI configuration
-- [x] Dashboard with quick starts and key information
-- [x] Voice mode for AI chat interaction
+2. Performance and Analytics
+   - Create detailed model performance tracking
+   - Implement AI interaction analytics
+   - Develop machine learning-based model recommendation system
 
-## Phase 2: Advanced AI Productivity Suite (Q4 2025)
-*Planned - Not Started*
+## Recommended Next Task
 
-### AI Project Manager
-- [ ] Automated project progression
-- [ ] Delay prediction and alerts
-- [ ] Real-time visibility into project timelines
-- [ ] Team workload management
+**Objective:** Develop a comprehensive model selection strategy that dynamically chooses the most appropriate AI model based on:
+- Task complexity
+- Cost considerations
+- Model-specific capabilities
+- User preferences
+- Historical performance metrics
 
-### AI Calendar
-- [ ] Intelligent task and meeting scheduling
-- [ ] Multiple calendar integration (Gmail, iCloud)
-- [ ] Automatic time-blocking for deep work
-- [ ] Overcommitment detection and alerts
+**Deliverables:**
+- Detailed algorithm for model selection
+- Performance tracking mechanism
+- Configurable selection criteria
+- Fallback and error handling strategies
 
-### AI Task Manager
-- [ ] Auto-scheduling based on deadlines and priorities
-- [ ] Real-time schedule adjustments
-- [ ] Priority highlighting
-- [ ] At-risk task flagging
+**Technical Challenges:**
+- Designing a flexible, extensible model selection framework
+- Implementing real-time performance tracking
+- Managing diverse model capabilities
+- Balancing performance, cost, and user experience
 
-### AI Meeting Notetaker
-- [ ] Automatic recording and transcription
-- [ ] Meeting summarization
-- [ ] Action item extraction and task creation
-- [ ] Transcript search and retrieval
+## Long-Term Vision
 
-### AI Workflows
-- [ ] Idea-to-project transformation
-- [ ] Automated task assignment
-- [ ] Workflow gap detection
-- [ ] Routine task automation
+### Architectural Goals
+- Build a truly adaptive AI service platform
+- Create a flexible, provider-agnostic AI orchestration system
+- Develop intelligent, context-aware model selection
 
-### AI Gantt Chart
-- [ ] Real-time timeline updates
-- [ ] Drag-and-drop timeline adjustments
-- [ ] Task grouping and color-coding
-- [ ] Multiple time view options
+### Innovation Targets
+- Machine learning-driven model performance prediction
+- Automated model capability discovery
+- Real-time model performance optimization
 
-### AI Meeting Assistant
-- [ ] Meeting preference customization
-- [ ] Personalized booking pages
-- [ ] Meeting templates
-- [ ] Integrated reminders and links
+## Quarterly Milestones
 
-## Phase 3: Advanced Integrations & Specialized Features (2026)
-*Planned - Not Started*
+### Q3 2025
+- Complete multi-model orchestration core
+- Implement first-generation model selection algorithm
+- Develop comprehensive model metadata system
 
-### Extended Google Workspace Integration
-- [ ] Full Google Docs CRUD operations
-- [ ] Google Meet integration
-- [ ] Contacts and Email integration
-- [ ] Advanced Drive management
+### Q4 2025
+- Advanced model performance tracking
+- Expand provider support
+- Create user-specific model preference system
 
-### Additional Integrations
-- [ ] Xero integration
-- [ ] Digital Asset Management (DAM)
-- [ ] Adobe Creative Cloud integration
-- [ ] CAD/Sketchup integration
-
-### Specialized Features
-- [ ] Client Portal
-- [ ] AI-Assisted Proposal Generation
-- [ ] Advanced FFE Database & Management
-- [ ] Enhanced Moodboarding/Pinning platform
-- [ ] Supplier database
-- [ ] AI-Powered Image Tagging/Search
-
-## Current Progress (May 2025)
-
-### Completed
-- Phase 0: Foundational MVP - Core Architecture & AI Interaction
-- Phase 1: Core Feature Modules & Key Integrations
-
-### In Progress
-- Preparing for Phase 2: Advanced AI Productivity Suite
-
-### Next Steps
-- Begin implementation of AI Project Manager
-- Develop AI Calendar features
-- Create AI Task Manager functionality
+### Q1 2026
+- Machine learning-driven model recommendation
+- Implement federated learning prototype
+- Advanced prompt engineering tools
